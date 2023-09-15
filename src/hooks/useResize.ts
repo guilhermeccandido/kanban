@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 type useReseizeProps = {
@@ -9,7 +11,7 @@ export interface ElementSize {
 	height: number;
 }
 
-const useResize = ({ el = window }: useReseizeProps): ElementSize => {
+const useResize = ({ el }: useReseizeProps): ElementSize => {
 	const [size, setSize] = useState<ElementSize>({ width: 0, height: 0 });
 
 	useEffect(() => {

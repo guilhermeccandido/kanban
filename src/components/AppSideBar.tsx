@@ -34,7 +34,7 @@ const AppSideBar = () => {
 	);
 
 	const dispatch = useDispatch();
-	const size = useResize({});
+	const size = useResize({ el: window });
 
 	const usingDrawer = size.width < 768;
 
@@ -69,7 +69,7 @@ const AppSideBar = () => {
 						<Link href={content.link} passHref legacyBehavior>
 							<a
 								onClick={handleCloseDrawer}
-								className='flex gap-5 content-center pb-2'
+								className='flex gap-5 content-center pb-1'
 							>
 								<span>{content.icon}</span>
 								<span>{content.title}</span>

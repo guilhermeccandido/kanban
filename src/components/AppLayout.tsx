@@ -1,10 +1,12 @@
 import { FC } from "react";
 import AppHeader from "./AppHeader";
-import AppSideBar from "./AppSideBar";
+import dynamic from "next/dynamic";
 
 type AppLayoutProps = {
   children: JSX.Element;
 };
+
+const AppSideBar = dynamic(() => import("./AppSideBar"), { ssr: false });
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   return (
