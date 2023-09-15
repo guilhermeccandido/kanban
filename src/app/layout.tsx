@@ -2,7 +2,8 @@ import AppLayout from '@/components/AppLayout';
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Providers } from '@/redux/Provider';
+import { Providers } from '@/components/Provider';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
 				<Providers>
 					<AppLayout>{children}</AppLayout>
 				</Providers>
+        <Toaster />
 			</body>
 		</html>
 	);

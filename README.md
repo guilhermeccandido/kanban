@@ -2,6 +2,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v18.0.0 or higher)
+- [npm](https://www.npmjs.com/) (v7.0.0 or higher)
+
 First, run the development server:
 
 ```bash
