@@ -10,11 +10,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
+# For local development
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
+
+# For docker development
+docker-compose up
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
