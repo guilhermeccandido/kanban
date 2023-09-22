@@ -1,9 +1,9 @@
 {
-  "name": "non-simple-todo",
+  "name": "simple-todo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "ts-node ./src/server.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -16,6 +16,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.4",
     "@redux-devtools/extension": "^3.2.5",
+    "@typegoose/typegoose": "^11.5.0",
     "@types/node": "20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
@@ -26,6 +27,7 @@
     "eslint-config-next": "13.4.19",
     "lucide-react": "^0.274.0",
     "mongodb": "^6.1.0",
+    "mongoose": "^7.5.2",
     "next": "13.4.19",
     "next-auth": "^4.23.1",
     "next-redux-wrapper": "^8.1.0",
@@ -39,5 +41,9 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "ts-node": "^10.9.1"
   }
 }

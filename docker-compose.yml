@@ -2,13 +2,13 @@ version: '3.8'
 services:
   web:
     restart: always
-    container_name: nonsimpletodo
+    container_name: simpletodo
     build:
       context: .
     volumes:
       - .:/app
     command: npm run dev
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     environment:
       NODE_ENV: development
