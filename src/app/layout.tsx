@@ -8,8 +8,8 @@ import { Toaster } from '@/components/ui/toaster';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-	title: 'Non Simple Todo',
-	description: 'A non simple todo site',
+	title: 'Simple Todo',
+	description: 'A simple todo site',
 };
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
 				<Providers>
 					<AppLayout>{children}</AppLayout>
 				</Providers>
-        <Toaster />
+				<Toaster />
 			</body>
 		</html>
 	);

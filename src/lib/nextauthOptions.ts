@@ -22,7 +22,7 @@ export const nextauthOptions: AuthOptions = {
 		async jwt({ token, user }: any) {
 			if (user) {
 				token.user = {
-					_id: user._id,
+					id: user.id,
 					email: user.email,
 					name: user.name,
                     image: user.image,

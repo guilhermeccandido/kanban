@@ -22,7 +22,7 @@ if (IS_DEVELOPMENT) {
     client = new MongoClient(uri, options);
     globalWithMongo._mongoClientPromise = client.connect();
   }
-  clientPromise = globalWithMongo._mongoClientPromise;
+  clientPromise = globalWithMongo._mongoClientPromise!;
 } else {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
