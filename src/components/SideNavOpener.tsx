@@ -25,7 +25,7 @@ const SideNavOpener: FC<SideNavOpenerProps> = ({ pageIcon }) => {
 	}, [dispatch]);
 
 	return (
-		<div className='w-5 h-5 cursor-pointer' onClick={handleOpenSideNav}>
+		<div className='w-6 h-6 cursor-pointer' onClick={handleOpenSideNav}>
 			{icon}
 		</div>
 	);

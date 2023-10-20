@@ -89,7 +89,9 @@ const AppSideBar = () => {
 				ref={drawerRef}
 			>
 				<div className='pb-5'>
-					<Menu onClick={handleCloseDrawer} className='cursor-pointer' />
+					<div className='w-6 h-6 cursor-pointer'>
+						<Menu onClick={handleCloseDrawer} />
+					</div>
 				</div>
 				{getContent()}
 			</div>
@@ -97,7 +99,9 @@ const AppSideBar = () => {
 	) : (
 		<div className='container pt-12 bg-white w-72 h-full mx-0 z-20'>
 			<div className='pb-5'>
-				<Menu onClick={handleCloseDrawer} className='cursor-pointer' />
+				<div className='w-6 h-6 cursor-pointer'>
+					<Menu onClick={handleCloseDrawer} />
+				</div>
 			</div>
 			{getContent()}
 		</div>
