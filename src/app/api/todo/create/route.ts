@@ -1,8 +1,7 @@
 import dbConnect from '@/lib/db';
 import debug from '@/lib/debug';
-import clientPromise from '@/lib/mongodb';
 import { getAuthSession } from '@/lib/nextauthOptions';
-import { TodoValidator } from '@/lib/validators/todo';
+import { TodoCreateValidator } from '@/lib/validators/todo';
 import TodoModel from '@/model/Todo';
 import dayjs from 'dayjs';
 
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
 			description = '',
 			state,
 			dueDate = defaultDueDate,
-		} = TodoValidator.parse(body);
+		} = TodoCreateValidator.parse(body);
 
 		const newTodo = {
 			title,
@@ -33,7 +32,7 @@ export async function POST(req: Request) {
 
         await dbConnect();
 		await TodoModel.create(newTodo);
-		return new Response('OK', { status: 201 });
+		return new Response('OK', { status: 200 });
 	} catch (error) {
 		debug('src/app/api/todo/create/route.ts', error);
 		return new Response('Internal Server Error', { status: 500 });

@@ -7,7 +7,7 @@ import {
 } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { TodoCreateRequest, TodoValidator } from '@/lib/validators/todo';
+import { TodoCreateRequest, TodoCreateValidator } from '@/lib/validators/todo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Label } from '../ui/label';
@@ -57,7 +57,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 		formState: { errors },
 		control,
 	} = useForm<TodoCreateRequest>({
-		resolver: zodResolver(TodoValidator),
+		resolver: zodResolver(TodoCreateValidator),
 	});
 
 	const { mutate: submitCreateTodoTask, isLoading } = useMutation({

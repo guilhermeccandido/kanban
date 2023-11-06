@@ -16,6 +16,9 @@ class Todo {
 	public dueDate?: Date;
 
 	@prop({ type: () => Date })
+	public plannedFinishDate?: Date;
+
+	@prop({ type: () => Date })
 	public createdAt!: Date;
 
 	@prop({ type: () => Date })
