@@ -1,5 +1,5 @@
 import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { User } from 'next-auth';
 
 class Todo {
@@ -25,5 +25,6 @@ class Todo {
 	public Owner!: Ref<User>;
 }
 
+export type TodoType = Todo & { _id: Types.ObjectId };
 const TodoModel = mongoose.models.Todo || getModelForClass(Todo);
 export default TodoModel;
