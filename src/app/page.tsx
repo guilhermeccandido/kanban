@@ -6,23 +6,24 @@ import { getAuthSession } from '@/lib/nextauthOptions';
 import TodoModel from '@/model/Todo';
 import { HomeIcon } from 'lucide-react';
 
-export default async function Home() {
+const Home = () => {
 	// const session = await getAuthSession();
 
-	let todos = ["hi"];
 	// if (session?.user) {
 	// } else {
-  //   todos = []
-  // }
+	//   todos = []
+	// }
 
 	return (
 		<div>
-			<div className='flex items-center'>
+			<div className='flex items-center pb-8'>
 				<SideNavOpener pageIcon={<HomeIcon />} />
 				<div className='pl-3 text-base'>Home</div>
-				<Tasks todos={todos}/>
-				<TaskCreator />
 			</div>
+			<Tasks />
+			<TaskCreator />
 		</div>
 	);
 }
+
+export default Home;
