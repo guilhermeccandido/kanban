@@ -103,9 +103,16 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 						<Label className='text-xl' htmlFor='state'>
 							State
 						</Label>
-						<CustomizedSelect
-							options={TASK_STATE_OPTIONS}
-							register={register('state')}
+						<Controller
+							control={control}
+							name='state'
+							render={({ field }) => (
+								<CustomizedSelect
+									options={TASK_STATE_OPTIONS}
+									placeholder='Select the state'
+									onChange={field.onChange}
+								/>
+							)}
 						/>
 					</div>
 					<div className='relative grid gap-1 pb-4'>
