@@ -7,7 +7,12 @@ import {
 } from '../ui/card';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { TodoCreateRequest, TodoCreateValidator } from '@/lib/validators/todo';
+import {
+	TodoCreateRequest,
+	TodoCreateValidator,
+	TodoCheckRequest,
+	TodoEditRequest,
+} from '@/lib/validators/todo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Label } from '../ui/label';
@@ -26,35 +31,48 @@ import { cn } from '@/lib/utils';
 import { Calendar } from '../ui/calendar';
 import { TASK_STATE_OPTIONS } from '@/lib/const';
 import dayjs from 'dayjs';
+import { TodoType } from '@/model/Todo';
 
 type TaskCreatorFormProps = {
 	handleOnSuccess: () => void;
+	task: TodoType;
 };
 
 type ErrorMessageProps = {
 	msg?: string;
 };
 
-const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
+const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
+	handleOnSuccess,
+	task,
+}) => {
 	const router = useRouter();
 	const {
 		handleSubmit,
 		register,
 		formState: { errors },
 		control,
-	} = useForm<TodoCreateRequest>({
+	} = useForm<TodoEditRequest>({
 		resolver: zodResolver(TodoCreateValidator),
 	});
 
 	const { mutate: submitCreateTodoTask, isLoading } = useMutation({
 		mutationFn: async ({
 			title,
+			description,
 			state,
 			dueDate,
 			plannedFinishDate,
-		}: TodoCreateRequest) => {
-			const payload = { title, state, dueDate, plannedFinishDate };
-			const result = await axios.post('/api/todo/create', payload);
+		}: TodoEditRequest) => {
+			const payload = {
+				id: task._id,
+				title,
+				state,
+				description,
+				dueDate,
+				plannedFinishDate,
+			};
+			const result = await axios.patch('/api/todo/edit', payload);
 			return result;
 		},
 		onSuccess: () => {
@@ -69,9 +87,8 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 	});
 
 	const ErrorMessage = memo<ErrorMessageProps>(function ErrorMessage({ msg }) {
-		return <span className='text-red-500 text-xs'>{msg}</span>
+		return <span className='text-red-500 text-xs'>{msg}</span>;
 	});
-	console.log(errors)
 
 	return (
 		<form
@@ -81,7 +98,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 		>
 			<Card>
 				<CardHeader>
-					<CardTitle>Create Todo Task</CardTitle>
+					<CardTitle>Edit Todo Task</CardTitle>
 				</CardHeader>
 				<CardContent>
 					<div className='relative grid gap-1 pb-4'>
@@ -93,6 +110,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 							className='w-[400px]'
 							size={32}
 							{...register('title')}
+							defaultValue={task.title}
 						/>
 						<ErrorMessage msg={errors.title?.message} />
 					</div>
@@ -103,13 +121,13 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 						<Controller
 							control={control}
 							name='state'
-							defaultValue='todo'
+							defaultValue={task.state}
 							render={({ field }) => (
 								<CustomizedSelect
 									options={TASK_STATE_OPTIONS}
 									placeholder='Select the state'
 									onChange={field.onChange}
-									defaultValue='todo'
+									defaultValue={task.state}
 								/>
 							)}
 						/>
@@ -122,6 +140,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 						<Controller
 							control={control}
 							name='dueDate'
+							defaultValue={task.dueDate}
 							render={({ field }) => (
 								<Popover>
 									<PopoverTrigger asChild>
@@ -164,6 +183,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 						<Controller
 							control={control}
 							name='plannedFinishDate'
+							defaultValue={task.plannedFinishDate}
 							render={({ field }) => (
 								<Popover>
 									<PopoverTrigger asChild>
@@ -197,11 +217,11 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
 								</Popover>
 							)}
 						/>
-						<ErrorMessage msg={errors.plannedFinishDate?.message} />
 					</div>
+					<ErrorMessage msg={errors.plannedFinishDate?.message} />
 				</CardContent>
 				<CardFooter>
-					<Button isLoading={isLoading}>Create Task</Button>
+					<Button isLoading={isLoading}>Edit Task</Button>
 				</CardFooter>
 			</Card>
 		</form>

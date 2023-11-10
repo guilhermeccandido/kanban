@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { AxiosResponse } from 'axios';
 import { Check } from 'lucide-react';
-import { FC, useState } from 'react';
+import { FC, MouseEvent, useState } from 'react';
 
 type CheckBoxProps = {
 	classname?: string;
@@ -20,7 +20,8 @@ const CheckBox: FC<CheckBoxProps> = ({
 }) => {
 	const [checked, setChecked] = useState(defaultChecked || false);
 
-	const handleOnClick = async () => {
+	const handleOnClick = async (e: MouseEvent<HTMLDivElement>) => {
+		e.stopPropagation();
 		setChecked(!checked);
 
 		if (async && onChange) {

@@ -12,7 +12,7 @@ export type Option = {
 };
 
 type CustomizedSelectProps = {
-	options: Option[];
+	options: Readonly<Option[]>;
 	placeholder?: string;
 	onChange?: (value: string) => void;
 	defaultValue?: string;
@@ -22,8 +22,9 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 	options,
 	placeholder = 'Please select',
 	onChange = () => {},
+	defaultValue = '',
 }) => {
-	const [value, setValue] = useState<Option | null>(null);
+	const [value, setValue] = useState<Option | null>(options.find((option) => option.value === defaultValue) || null);
 	const [open, setOpen] = useState(false);
 	const [up, setUp] = useState(false);
 	const selectorRef = useRef<HTMLDivElement>(null);
@@ -49,7 +50,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 	const selectorHeight =
 		Object.keys(options).length * HEIGHT_OF_OPINION + MARGIN_OF_SELECTOR;
 
-	const orderedOptions = up ? options.reverse() : options;
+	const orderedOptions = up ? options.slice().reverse() : options;
 
 	return (
 		<div className='relative text-sm text-left'>

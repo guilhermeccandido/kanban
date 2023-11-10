@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef } from 'react';
 
 type CustomizedDialogProps = {
-	children: JSX.Element;
+	children?: JSX.Element;
 	open: boolean;
 	onClose?: () => void;
 };

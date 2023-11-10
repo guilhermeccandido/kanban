@@ -13,13 +13,13 @@ export async function POST(req: Request) {
 
 		const body = await req.json();
 
-		const defaultDueDate = dayjs().add(7, 'day').unix();
 
 		const {
 			title,
 			description = '',
 			state,
-			dueDate = defaultDueDate,
+			dueDate,
+			plannedFinishDate
 		} = TodoCreateValidator.parse(body);
 
 		const newTodo = {
@@ -27,6 +27,7 @@ export async function POST(req: Request) {
 			description,
 			state,
 			dueDate,
+			plannedFinishDate,
 			Owner: session.user.id,
 		};
 

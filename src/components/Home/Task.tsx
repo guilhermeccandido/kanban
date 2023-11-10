@@ -5,18 +5,20 @@ import { FC } from 'react';
 import CheckBox from '../CustomizedCheckBox';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { TodoUpdateRequest } from '@/lib/validators/todo';
+import { TodoCheckRequest } from '@/lib/validators/todo';
+import { Types } from 'mongoose';
 
 type TaskProps = {
 	todo: TodoType;
+	handleOpenTaskEditor: (id: Types.ObjectId) => void;
 };
 
-const Task: FC<TaskProps> = ({ todo }) => {
+const Task: FC<TaskProps> = ({ todo, handleOpenTaskEditor }) => {
 	const router = useRouter();
 
 	const handleOnCheckBoxChange = async (value: boolean) => {
-		const payload: TodoUpdateRequest = { id: todo._id, state: value ? 'done' : 'todo' };
-		const response = await axios.patch('/api/todo/update', payload);
+		const payload: TodoCheckRequest = { id: todo._id };
+		const response = await axios.patch('/api/todo/check', payload);
 		return response;
 	};
 
@@ -26,8 +28,8 @@ const Task: FC<TaskProps> = ({ todo }) => {
 	};
 
 	return (
-		<div className='flex items-center bg-white px-4 py-3 rounded-md'>
-			<CheckBox onChange={handleOnCheckBoxChange} onSuccess={handleOnSuccess} async={true} />
+		<div className='flex items-center bg-white px-4 py-3 rounded-md' onClick={() => handleOpenTaskEditor(todo._id)}>
+			<CheckBox onChange={handleOnCheckBoxChange} onSuccess={handleOnSuccess} async={true} classname='z-10'/>
 			<div className='mx-3'>{todo.title}</div>
 		</div>
 	);

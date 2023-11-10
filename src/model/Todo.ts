@@ -12,17 +12,17 @@ class Todo {
 	@prop({ type: () => String, required: true })
 	public state!: 'todo' | 'in-progress' | 'review' | 'done';
 
-	@prop({ type: () => Date })
-	public dueDate?: Date;
+	@prop({ type: () => Number })
+	public dueDate?: number;
 
-	@prop({ type: () => Date })
-	public plannedFinishDate?: Date;
+	@prop({ type: () => Number })
+	public plannedFinishDate?: number;
 
-	@prop({ type: () => Date })
-	public createdAt!: Date;
+	@prop({ type: () => Number })
+	public createdAt!: number;
 
-	@prop({ type: () => Date })
-	public updatedAt!: Date;
+	@prop({ type: () => Number })
+	public updatedAt!: number;
 
 	@prop({ ref: () => 'User', required: true })
 	public Owner!: Ref<User>;
