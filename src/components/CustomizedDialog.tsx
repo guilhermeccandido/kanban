@@ -36,7 +36,7 @@ const CustomizedDialog: FC<CustomizedDialogProps> = ({
 		<>
 			<div className='absolute w-screen h-screen z-10 bg-zinc-500/30 backdrop-blur-[1px] inset-0' />
 			<div
-				className='absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-[540px] rounded-xl shadow-lg z-20 bg-white h-fit'
+				className='absolute inset-1/2 -translate-x-1/2 -translate-y-[65%] w-[540px] rounded-xl shadow-lg z-20 bg-white h-fit'
 				ref={dialogRef}
 			>
 				{children}

@@ -14,7 +14,7 @@ const AppLayout: FC<AppLayoutProps> = ({ children }) => {
       <AppHeader />
       <div className="md:flex w-full h-full">
         <AppSideBar />
-        <div className="w-full h-full pt-12 p-8">
+        <div className="w-full h-full pt-12 p-8 relative">
           {children}
         </div>
       </div>
