@@ -25,6 +25,7 @@ export const TodoCreateValidator = z
 export const TodoCheckValidator = z
 	.object({
 		id: z.custom<ObjectId>(),
+		checked: z.boolean(),
 	})
 
 export const TodoEditValidator = z.object({

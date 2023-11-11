@@ -8,23 +8,28 @@ import axios from 'axios';
 import { TodoCheckRequest } from '@/lib/validators/todo';
 import { Types } from 'mongoose';
 import dayjs from 'dayjs';
-import { getEarilerDate } from '@/lib/utils';
+import { cn, getEarilerDate } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '@/redux/store';
 
 type TaskProps = {
 	todo: TodoType;
 	handleOpenTaskEditor: (id: Types.ObjectId) => void;
+	checked?: boolean;
 };
 
-const Task: FC<TaskProps> = ({ todo, handleOpenTaskEditor }) => {
+const Task: FC<TaskProps> = ({
+	todo,
+	handleOpenTaskEditor,
+	checked = false,
+}) => {
 	const router = useRouter();
 	const sortedBy = useSelector<ReduxState, string>(
 		(state) => state.todo.sortedBy
 	);
 
 	const handleOnCheckBoxChange = async (value: boolean) => {
-		const payload: TodoCheckRequest = { id: todo._id };
+		const payload: TodoCheckRequest = { id: todo._id, checked: value };
 		const response = await axios.patch('/api/todo/check', payload);
 		return response;
 	};
@@ -53,8 +58,9 @@ const Task: FC<TaskProps> = ({ todo, handleOpenTaskEditor }) => {
 					onSuccess={handleOnSuccess}
 					async={true}
 					classname='z-10'
+					defaultChecked={checked}
 				/>
-				<div className='mx-3'>{todo.title}</div>
+				<div className={cn('mx-3',checked && 'line-through text-zinc-400')}>{todo.title}</div>
 			</div>
 			<div className='text-zinc-400'>
 				{displayDate !== undefined ? dayjs(displayDate).format('DD/MM') : ''}

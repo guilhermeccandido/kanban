@@ -9,12 +9,18 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { sortTodoBy } from '@/redux/actions/todoAction';
 import { TodoState } from '@/redux/reducers/todoReducer';
+import { cn } from '@/lib/utils';
+import { ReduxState } from '@/redux/store';
 
 const TaskSorter = () => {
 	const dispatch = useDispatch();
+
+	const sortedBy = useSelector<ReduxState, TodoState['sortedBy']>(
+		(state) => state.todo.sortedBy
+	);
 
 	const handleModifySort = (sortBy: TodoState['sortedBy']) => {
 		dispatch(sortTodoBy(sortBy));
@@ -37,7 +43,15 @@ const TaskSorter = () => {
 					className='px-4 py-2'
 					onClick={() => handleModifySort('priority')}
 				>
-					<div>Priority</div>
+					<div className='flex'>
+						<div
+							className={cn(
+								'w-1 h-1 mr-2 rounded-full border-1',
+								sortedBy === 'priority' && 'bg-slate-400'
+							)}
+						></div>
+						<div>Priority</div>
+					</div>
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
@@ -45,7 +59,15 @@ const TaskSorter = () => {
 					className='px-4 py-2'
 					onClick={() => handleModifySort('dueDate')}
 				>
-					<div>Due date</div>
+					<div className='flex'>
+						<div
+							className={cn(
+								'w-1 h-1 mr-2 rounded-full border-1',
+								sortedBy === 'dueDate' && 'bg-slate-400'
+							)}
+						></div>
+						<div>Due Date</div>
+					</div>
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
@@ -53,7 +75,15 @@ const TaskSorter = () => {
 					className='px-4 py-2'
 					onClick={() => handleModifySort('plannedFinishDate')}
 				>
-					<div>Planned finish Date</div>
+					<div className='flex'>
+						<div
+							className={cn(
+								'w-1 h-1 mr-2 rounded-full border-1',
+								sortedBy === 'plannedFinishDate' && 'bg-slate-400'
+							)}
+						></div>
+						<div>Planned Finish Date</div>
+					</div>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

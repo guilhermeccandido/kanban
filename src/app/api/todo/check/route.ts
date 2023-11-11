@@ -12,15 +12,14 @@ export async function PATCH(req) {
 
         const body = await req.json();
 
-        const { id } = TodoCheckValidator.parse(body);
+        const { id, checked } = TodoCheckValidator.parse(body);
 
         await dbConnect();
         const [record] = await TodoModel.find({ _id: id, Owner: session.user.id });
         if (!record) return new Response('Record Not Found', { status: 404 });
 
         await TodoModel.updateOne({ _id: id, Owner: session.user.id }, {
-            state : 'review',
-
+            state : checked ? 'review' : 'in-progress',
         });
 
         return new Response('OK', { status: 200 });

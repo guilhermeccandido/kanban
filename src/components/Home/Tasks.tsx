@@ -5,14 +5,15 @@ import { TodoType } from '@/model/Todo';
 import TaskEditor from './TaskEditor';
 import { useSelector } from 'react-redux';
 import { ReduxState } from '@/redux/store';
-import { TodoState } from '@/redux/reducers/todoReducer';
 import TaskOrderManager from './TaskOrderManager';
+import FinishedTasksManager from './FinishedTasks';
 
 type TasksProps = {
 	unFinishedTodos: TodoType[];
+	finishedTodos: TodoType[];
 };
 
-const Tasks: FC<TasksProps> = ({ unFinishedTodos }) => {
+const Tasks: FC<TasksProps> = ({ unFinishedTodos, finishedTodos }) => {
 	const [openTaskEditor, setOpenTaskEditor] = useState(false);
 	const [selectedTask, setSelectedTask] = useState<TodoType | null>(null);
 
@@ -82,7 +83,7 @@ const Tasks: FC<TasksProps> = ({ unFinishedTodos }) => {
 	}, [unFinishedTodos, sortedBy, sortAsc]);
 
 	const handleOpenTaskEditor = (todoId) => {
-		const selectedTask = unFinishedTodos.find((todo) => todo._id === todoId);
+		const selectedTask = [...unFinishedTodos, ...finishedTodos].find((todo) => todo._id === todoId);
 		setSelectedTask(selectedTask!);
 		setOpenTaskEditor(true);
 	};
@@ -102,6 +103,10 @@ const Tasks: FC<TasksProps> = ({ unFinishedTodos }) => {
 						handleOpenTaskEditor={handleOpenTaskEditor}
 					/>
 				))}
+				<FinishedTasksManager
+					tasks={finishedTodos}
+					handleOpenTaskEditor={handleOpenTaskEditor}
+				/>
 				<TaskEditor
 					open={openTaskEditor}
 					onClose={handleCloseTaskEditor}
