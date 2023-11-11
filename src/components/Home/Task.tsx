@@ -7,6 +7,10 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { TodoCheckRequest } from '@/lib/validators/todo';
 import { Types } from 'mongoose';
+import dayjs from 'dayjs';
+import { getEarilerDate } from '@/lib/utils';
+import { useSelector } from 'react-redux';
+import { ReduxState } from '@/redux/store';
 
 type TaskProps = {
 	todo: TodoType;
@@ -15,6 +19,9 @@ type TaskProps = {
 
 const Task: FC<TaskProps> = ({ todo, handleOpenTaskEditor }) => {
 	const router = useRouter();
+	const sortedBy = useSelector<ReduxState, string>(
+		(state) => state.todo.sortedBy
+	);
 
 	const handleOnCheckBoxChange = async (value: boolean) => {
 		const payload: TodoCheckRequest = { id: todo._id };
@@ -27,10 +34,31 @@ const Task: FC<TaskProps> = ({ todo, handleOpenTaskEditor }) => {
 		router.refresh();
 	};
 
+	const earlierDueDate = getEarilerDate(todo.dueDate, todo.plannedFinishDate);
+	const displayDate =
+		sortedBy === 'dueDate'
+			? todo.dueDate
+			: sortedBy === 'plannedFinishDate'
+			? todo.plannedFinishDate
+			: earlierDueDate;
+
 	return (
-		<div className='flex items-center bg-white px-4 py-3 rounded-md' onClick={() => handleOpenTaskEditor(todo._id)}>
-			<CheckBox onChange={handleOnCheckBoxChange} onSuccess={handleOnSuccess} async={true} classname='z-10'/>
-			<div className='mx-3'>{todo.title}</div>
+		<div
+			className='flex items-center bg-white px-4 py-3 rounded-md cursor-pointer hover:bg-zinc-100 shadow-md justify-between'
+			onClick={() => handleOpenTaskEditor(todo._id)}
+		>
+			<div className='flex'>
+				<CheckBox
+					onChange={handleOnCheckBoxChange}
+					onSuccess={handleOnSuccess}
+					async={true}
+					classname='z-10'
+				/>
+				<div className='mx-3'>{todo.title}</div>
+			</div>
+			<div className='text-zinc-400'>
+				{displayDate !== undefined ? dayjs(displayDate).format('DD/MM') : ''}
+			</div>
 		</div>
 	);
 };

@@ -4,11 +4,15 @@ import { HYDRATE } from "next-redux-wrapper";
 import { AnyAction } from "redux";
 
 export interface TodoState {
-    todos: TodoType[];
+    // todos: TodoType[];
+    sortedBy: 'priority' | 'dueDate' | 'plannedFinishDate';
+    sortedAsc: boolean;
 }
 
 const initialState: TodoState = {
-    todos: [],
+    // todos: [],
+    sortedBy: 'priority',
+    sortedAsc: true,
 };
 
 const reducer = (state = initialState, action: TodoAction | AnyAction): TodoState => {
@@ -19,16 +23,27 @@ const reducer = (state = initialState, action: TodoAction | AnyAction): TodoStat
                 ...state,
                 ...action.payload,
             };
-        case todoActionType.UPDATE_TODO:
+        case todoActionType.SORT_TODO_BY:
             return {
                 ...state,
-                todos: action.payload,
+                sortedBy: action.payload,
+                sortedAsc: true
             };
-        case todoActionType.ADD_TODO:
+        case todoActionType.SORT_TODO_ASC:
             return {
                 ...state,
-                todos: [...state.todos, action.payload],
+                sortedAsc: action.payload,
             };
+        // case todoActionType.UPDATE_TODO:
+        //     return {
+        //         ...state,
+        //         todos: action.payload,
+        //     };
+        // case todoActionType.ADD_TODO:
+        //     return {
+        //         ...state,
+        //         todos: [...state.todos, action.payload],
+        //     };
         default:
             return state;
     }

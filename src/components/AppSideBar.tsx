@@ -14,9 +14,9 @@ type NavContent = {
 	link: string;
 };
 
-const NAV_CONTENT = [
+const NAV_CONTENT: NavContent[] = [
 	{
-		title: 'TODO',
+		title: 'Todo',
 		icon: <Dumbbell />,
 		link: '/',
 	},
