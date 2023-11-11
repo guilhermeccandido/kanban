@@ -17,12 +17,12 @@ const initialState: TodoState = {
 
 const reducer = (state = initialState, action: TodoAction | AnyAction): TodoState => {
     switch (action.type) {
-        case HYDRATE:
-            // this will overwrite the existing client state
-            return {
-                ...state,
-                ...action.payload,
-            };
+        // case HYDRATE:
+        //     // this will overwrite the existing client state
+        //     return {
+        //         ...state,
+        //         ...action.payload,
+        //     };
         case todoActionType.SORT_TODO_BY:
             return {
                 ...state,
