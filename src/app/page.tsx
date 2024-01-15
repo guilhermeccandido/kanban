@@ -1,3 +1,4 @@
+import HomeTaskCreator from "@/components/Home/HomeTaskCreator";
 import TaskCreator from "@/components/Home/TaskCreator";
 import TaskSorter from "@/components/Home/TaskSorter";
 import SideNavOpener from "@/components/SideNavOpener";
@@ -42,6 +43,7 @@ const Home = async () => {
         <TaskSorter />
       </div>
       <Tasks unFinishedTodos={unFinishedTodos} finishedTodos={finishedTodos} />
+      <HomeTaskCreator />
       <TaskCreator />
     </div>
   );

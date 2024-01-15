@@ -8,6 +8,8 @@ export interface TodoState {
   isTodoEditorOpen: boolean;
   targetTodo: TodoType | null;
   taskEditorCaller: string;
+  isTodoCreatorOpen: boolean;
+  taskCreatorCaller: string;
 }
 
 const initialState: TodoState = {
@@ -16,6 +18,8 @@ const initialState: TodoState = {
   isTodoEditorOpen: false,
   targetTodo: null,
   taskEditorCaller: "",
+  isTodoCreatorOpen: false,
+  taskCreatorCaller: "",
 };
 
 const reducer = (
@@ -46,6 +50,18 @@ const reducer = (
         ...state,
         isTodoEditorOpen: false,
         taskEditorCaller: "",
+      };
+    case todoActionType.OPEN_TODO_CREATOR:
+      return {
+        ...state,
+        isTodoCreatorOpen: true,
+        taskCreatorCaller: action.payload,
+      };
+    case todoActionType.CLOSE_TODO_CREATOR:
+      return {
+        ...state,
+        isTodoCreatorOpen: false,
+        taskCreatorCaller: "",
       };
     default:
       return state;
