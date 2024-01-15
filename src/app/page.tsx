@@ -34,7 +34,7 @@ const Home = async () => {
   }
 
   return (
-    <div>
+    <div className="h-full">
       <div className="flex items-center pb-8 justify-between">
         <div className="flex">
           <SideNavOpener pageIcon={<HomeIcon />} />
