@@ -51,7 +51,6 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
     resolver: zodResolver(TodoCreateValidator),
     defaultValues: taskCreatorDefaultValues,
   });
-  console.log(taskCreatorDefaultValues);
 
   const { mutate: submitCreateTodoTask, isLoading } = useMutation({
     mutationFn: async ({

@@ -61,7 +61,7 @@ const reducer = (
       return {
         ...state,
         isTodoCreatorOpen: true,
-        taskCreatorCaller: action.payload,
+        taskCreatorCaller: action.payload.taskCreatorCaller,
         taskCreatorDefaultValues: action.payload.taskCreatorDefaultValues,
       };
     case todoActionType.CLOSE_TODO_CREATOR:
