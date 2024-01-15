@@ -6,8 +6,8 @@
 		"next/core-web-vitals"
 	],
 	"parser": "@typescript-eslint/parser",
-	"parserOptions": { "project": ["./tsconfig.json"] },
-	"plugins": ["@typescript-eslint"],
+	"parserOptions": { "project": ["./tsconfig.json"], "ecmaFeatures": {"jsx": true} },
+	"plugins": ["@typescript-eslint", "react"],
 	"rules": {
 		"@typescript-eslint/strict-boolean-expressions": [
 			2,
