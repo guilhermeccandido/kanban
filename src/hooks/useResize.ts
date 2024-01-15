@@ -3,33 +3,33 @@
 import { useEffect, useState } from 'react';
 
 type useReseizeProps = {
-	el?: HTMLElement | Window;
+  el?: HTMLElement | Window;
 };
 
 export interface ElementSize {
-	width: number;
-	height: number;
+  width: number;
+  height: number;
 }
 
 const useResize = ({ el }: useReseizeProps): ElementSize => {
-	const [size, setSize] = useState<ElementSize>({ width: 0, height: 0 });
+  const [size, setSize] = useState<ElementSize>({ width: 0, height: 0 });
 
-	useEffect(() => {
-		if (!el) return;
+  useEffect(() => {
+    if (!el) return;
 
-		const handleResize = () => {
-			const width = el instanceof Window ? el.innerWidth : el.clientWidth;
-			const height = el instanceof Window ? el.innerHeight : el.clientHeight;
-			setSize({ width, height });
-		};
+    const handleResize = () => {
+      const width = el instanceof Window ? el.innerWidth : el.clientWidth;
+      const height = el instanceof Window ? el.innerHeight : el.clientHeight;
+      setSize({ width, height });
+    };
 
-		handleResize();
-		el.addEventListener('resize', handleResize);
+    handleResize();
+    el.addEventListener('resize', handleResize);
 
-		return () => {};
-	}, [el]);
+    return () => { };
+  }, [el]);
 
-	return size;
+  return size;
 };
 
 export default useResize;
