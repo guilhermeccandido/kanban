@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { TodoType } from "@/model/Todo";
-import { FC } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { TodoOfDay } from "./TodoCalendar";
 import TodoCell from "./TodoCell";
 
@@ -15,19 +15,25 @@ const DayCell: FC<DayCellProps> = ({
   todos,
   numberOfTaskdisplaying = 3,
 }) => {
-  const getTodoCells = (todos: TodoOfDay) => {
+  const includedTodos = useMemo(() => {
     if (typeof todos === "undefined") return null;
     let numberOfIncludedTodos = 0;
-    const includedTodos: TodoOfDay = {
-      deadline: [],
-      plannedDeadline: [],
-      finished: [],
+    const includedTodos: { todos: TodoOfDay; numberOfHiddenTodo: number } = {
+      todos: {
+        deadline: [],
+        plannedDeadline: [],
+        finished: [],
+      },
+      numberOfHiddenTodo: 0,
     };
     if (todos.deadline.length > numberOfTaskdisplaying) {
-      includedTodos.deadline = todos.deadline.slice(0, numberOfTaskdisplaying);
+      includedTodos.todos.deadline = todos.deadline.slice(
+        0,
+        numberOfTaskdisplaying,
+      );
       numberOfIncludedTodos = numberOfTaskdisplaying;
     } else {
-      includedTodos.deadline = todos.deadline;
+      includedTodos.todos.deadline = todos.deadline;
       numberOfIncludedTodos += todos.deadline.length;
     }
 
@@ -35,13 +41,13 @@ const DayCell: FC<DayCellProps> = ({
       todos.plannedDeadline.length + numberOfIncludedTodos >
       numberOfTaskdisplaying
     ) {
-      includedTodos.plannedDeadline = todos.plannedDeadline.slice(
+      includedTodos.todos.plannedDeadline = todos.plannedDeadline.slice(
         0,
         numberOfTaskdisplaying - numberOfIncludedTodos,
       );
       numberOfIncludedTodos = numberOfTaskdisplaying;
     } else {
-      includedTodos.plannedDeadline = todos.plannedDeadline;
+      includedTodos.todos.plannedDeadline = todos.plannedDeadline;
       numberOfIncludedTodos += todos.plannedDeadline.length;
     }
 
@@ -49,17 +55,23 @@ const DayCell: FC<DayCellProps> = ({
       todos.finished.length + numberOfIncludedTodos >
       numberOfTaskdisplaying
     ) {
-      includedTodos.finished = todos.finished.slice(
+      includedTodos.todos.finished = todos.finished.slice(
         0,
         numberOfTaskdisplaying - numberOfIncludedTodos,
       );
       numberOfIncludedTodos = numberOfTaskdisplaying;
     } else {
-      includedTodos.finished = todos.finished;
+      includedTodos.todos.finished = todos.finished;
       numberOfIncludedTodos += todos.finished.length;
     }
-    // console.log(includedTodos, todos, day);
-  };
+
+    includedTodos.numberOfHiddenTodo =
+      Object.values(todos).reduce((acc, value) => {
+        return acc + value.length;
+      }, 0) - numberOfTaskdisplaying;
+
+    return includedTodos;
+  }, [todos, numberOfTaskdisplaying]);
 
   return (
     <div className="flex-1 flex flex-col items-center border-r border-b border-zinc-300 overflow-hidden">
@@ -70,9 +82,17 @@ const DayCell: FC<DayCellProps> = ({
           {day}
         </div>
       </div>
-      <TodoCell todos={todos?.deadline} className="bg-red-400" />
-      <TodoCell todos={todos?.plannedDeadline} className="bg-orange-400" />
-      <TodoCell todos={todos?.finished} className="bg-zinc-300" />
+      <TodoCell todos={includedTodos?.todos.deadline} className="bg-red-400" />
+      <TodoCell
+        todos={includedTodos?.todos.plannedDeadline}
+        className="bg-orange-400"
+      />
+      <TodoCell todos={includedTodos?.todos.finished} className="bg-zinc-300" />
+      {includedTodos?.numberOfHiddenTodo > 0 && (
+        <div className="px-2 w-full text-sm overflow-hidden whitespace-nowrap text-ellipsis text-center">
+          {includedTodos?.numberOfHiddenTodo} todo hidden
+        </div>
+      )}
     </div>
   );
 };

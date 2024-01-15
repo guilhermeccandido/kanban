@@ -51,7 +51,7 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
 
   useLayoutEffect(() => {
     const newNumberOfTaskdisplaying = Math.trunc(
-      (calendarHeight / numberOfRow - 20) / HEIGHT_OF_CELL_TASK - 1,
+      (calendarHeight / numberOfRow - 40) / HEIGHT_OF_CELL_TASK,
     );
     setNumberOfTaskdisplaying(newNumberOfTaskdisplaying);
   }, [calendarHeight, numberOfRow]);

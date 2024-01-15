@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type useReseizeProps = {
   el?: HTMLElement | Window;
@@ -24,9 +24,11 @@ const useResize = ({ el }: useReseizeProps): ElementSize => {
     };
 
     handleResize();
-    el.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
-    return () => { };
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, [el]);
 
   return size;
