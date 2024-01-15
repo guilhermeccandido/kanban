@@ -38,9 +38,13 @@ export interface CloseTodoCreatorI {
   payload: null;
 }
 
-export interface OpenTodoCreatorI {
+export type TaskCreatorDefaultValues = Partial<Pick<TodoType, "dueDate">>;
+export interface openTodoCreatorI {
   type: todoActionType.OPEN_TODO_CREATOR;
-  payload: string;
+  payload: {
+    taskCreatorCaller: string;
+    taskCreatorDefaultValues?: TaskCreatorDefaultValues;
+  };
 }
 
 export const sortTodoBy = (sortedBy: TodoState["sortedBy"]): SortTodoI => {
@@ -84,12 +88,16 @@ export const CloseTodoCreator = (): CloseTodoCreatorI => {
   };
 };
 
-export const OpenTodoCreator = (
+export const openTodoCreator = (
   taskCreatorCaller: string,
-): OpenTodoCreatorI => {
+  taskCreatorDefaultValues?: TaskCreatorDefaultValues,
+): openTodoCreatorI => {
   return {
     type: todoActionType.OPEN_TODO_CREATOR,
-    payload: taskCreatorCaller,
+    payload: {
+      taskCreatorCaller,
+      taskCreatorDefaultValues,
+    },
   };
 };
 
@@ -99,4 +107,4 @@ export type TodoAction =
   | CloseTodoEditorI
   | OpenTodoEditorI
   | CloseTodoCreatorI
-  | OpenTodoCreatorI;
+  | openTodoCreatorI;

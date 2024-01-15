@@ -152,7 +152,8 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
         const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
         return (
           <DayCell
-            key={`prev-${day}`}
+            key={dayCode}
+            dayCode={dayCode}
             day={day}
             todos={todos}
             numberOfTaskdisplaying={numberOfTaskdisplaying}
@@ -177,7 +178,8 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
         const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
         return (
           <DayCell
-            key={`next-${index + 1}`}
+            key={dayCode}
+            dayCode={dayCode}
             day={index + 1}
             todos={todos}
             numberOfTaskdisplaying={numberOfTaskdisplaying}
@@ -193,7 +195,8 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
       const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
       return (
         <DayCell
-          key={`curr-${day}`}
+          key={dayCode}
+          dayCode={dayCode}
           day={day}
           todos={todos}
           numberOfTaskdisplaying={numberOfTaskdisplaying}

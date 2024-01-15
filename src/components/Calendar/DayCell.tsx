@@ -1,20 +1,31 @@
 import { cn } from "@/lib/utils";
 import { TodoType } from "@/model/Todo";
-import { FC, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import { TodoOfDay } from "./TodoCalendar";
 import TodoCell from "./TodoCell";
+import { useDispatch } from "react-redux";
+import { openTodoCreator } from "@/redux/actions/todoAction";
+import dayjs from "dayjs";
 
 type DayCellProps = {
-  day: number;
+  dayCode: string;
   todos?: TodoOfDay;
   numberOfTaskdisplaying?: number;
 };
 
 const DayCell: FC<DayCellProps> = ({
-  day,
+  dayCode,
   todos,
   numberOfTaskdisplaying = 3,
 }) => {
+  const dispatch = useDispatch();
+  const { day, unixTime } = useMemo(() => {
+    const dayjsObj = dayjs(dayCode);
+    return {
+      day: dayjsObj.day(),
+      unixTime: dayjsObj.unix() * 1000,
+    };
+  }, [dayCode]);
   const includedTodos = useMemo(() => {
     if (typeof todos === "undefined") return null;
     let numberOfIncludedTodos = 0;
@@ -73,8 +84,15 @@ const DayCell: FC<DayCellProps> = ({
     return includedTodos;
   }, [todos, numberOfTaskdisplaying]);
 
+  const handleOpenTaskCreator = () => {
+    dispatch(openTodoCreator("/calendar", { dueDate: unixTime }));
+  };
+
   return (
-    <div className="flex-1 flex flex-col items-center border-r border-b border-zinc-300 overflow-hidden">
+    <div
+      className="flex-1 flex flex-col items-center border-r border-b border-zinc-300 overflow-hidden"
+      onClick={handleOpenTaskCreator}
+    >
       <div className="w-5 h-5 cursor-pointer">
         <div
           className={`w-full h-full rounded-full flex justify-center items-center text-sm`}

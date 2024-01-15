@@ -1,5 +1,9 @@
 import { TodoType } from "@/model/Todo";
-import { TodoAction, todoActionType } from "../actions/todoAction";
+import {
+  TaskCreatorDefaultValues,
+  TodoAction,
+  todoActionType,
+} from "../actions/todoAction";
 import { AnyAction } from "redux";
 
 export interface TodoState {
@@ -10,6 +14,7 @@ export interface TodoState {
   taskEditorCaller: string;
   isTodoCreatorOpen: boolean;
   taskCreatorCaller: string;
+  taskCreatorDefaultValues: TaskCreatorDefaultValues;
 }
 
 const initialState: TodoState = {
@@ -20,6 +25,7 @@ const initialState: TodoState = {
   taskEditorCaller: "",
   isTodoCreatorOpen: false,
   taskCreatorCaller: "",
+  taskCreatorDefaultValues: {},
 };
 
 const reducer = (
@@ -56,6 +62,7 @@ const reducer = (
         ...state,
         isTodoCreatorOpen: true,
         taskCreatorCaller: action.payload,
+        taskCreatorDefaultValues: action.payload.taskCreatorDefaultValues,
       };
     case todoActionType.CLOSE_TODO_CREATOR:
       return {

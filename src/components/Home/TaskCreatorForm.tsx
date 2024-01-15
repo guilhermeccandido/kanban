@@ -26,16 +26,21 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { TASK_STATE_OPTIONS } from "@/lib/const";
 import dayjs from "dayjs";
+import { TaskCreatorDefaultValues } from "@/redux/actions/todoAction";
 
 type TaskCreatorFormProps = {
   handleOnSuccess: () => void;
+  taskCreatorDefaultValues: TaskCreatorDefaultValues;
 };
 
 type ErrorMessageProps = {
   msg?: string;
 };
 
-const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
+const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
+  handleOnSuccess,
+  taskCreatorDefaultValues,
+}) => {
   const router = useRouter();
   const {
     handleSubmit,
@@ -44,7 +49,9 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
     control,
   } = useForm<TodoCreateRequest>({
     resolver: zodResolver(TodoCreateValidator),
+    defaultValues: taskCreatorDefaultValues,
   });
+  console.log(taskCreatorDefaultValues);
 
   const { mutate: submitCreateTodoTask, isLoading } = useMutation({
     mutationFn: async ({
@@ -68,7 +75,6 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
   const ErrorMessage = memo<ErrorMessageProps>(function ErrorMessage({ msg }) {
     return <span className="text-red-500 text-xs">{msg}</span>;
   });
-  console.log(errors);
 
   return (
     <form
@@ -143,6 +149,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({ handleOnSuccess }) => {
                       selected={field.value ? new Date(field.value) : undefined}
                       onSelect={(date) => {
                         const timestamp = date ? date.getTime() : undefined;
+                        console.log(date.getTime());
                         field.onChange(timestamp);
                       }}
                       initialFocus

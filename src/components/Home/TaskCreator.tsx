@@ -3,8 +3,8 @@
 import CustomizedDialog from "../CustomizedDialog";
 import TaskCreatorForm from "./TaskCreatorForm";
 import { useDispatch, useSelector } from "react-redux";
-import { ReduxState } from "@/redux/store";
-import { CloseTodoCreator } from "@/redux/actions/todoAction";
+import store, { ReduxState } from "@/redux/store";
+import { CloseTodoCreator, TaskCreatorDefaultValues } from "@/redux/actions/todoAction";
 import { useRouter } from "next/navigation";
 
 const TaskCreator = () => {
@@ -13,6 +13,9 @@ const TaskCreator = () => {
   );
   const taskCreatorCaller = useSelector<ReduxState, string>(
     (store) => store.todo.taskCreatorCaller,
+  );
+  const taskCreatorDefaultValues = useSelector<ReduxState, TaskCreatorDefaultValues>(
+    (store) => store.todo.taskCreatorDefaultValues,
   );
   const dispatch = useDispatch();
   const router = useRouter();
@@ -29,7 +32,10 @@ const TaskCreator = () => {
 
   return (
     <CustomizedDialog open={open} onClose={handleOnClose}>
-      <TaskCreatorForm handleOnSuccess={handleOnSuccess} />
+      <TaskCreatorForm
+        handleOnSuccess={handleOnSuccess}
+        taskCreatorDefaultValues={taskCreatorDefaultValues}
+      />
     </CustomizedDialog>
   );
 };
