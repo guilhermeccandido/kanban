@@ -22,7 +22,7 @@ const DayCell: FC<DayCellProps> = ({
   const { day, unixTime } = useMemo(() => {
     const dayjsObj = dayjs(dayCode);
     return {
-      day: dayjsObj.day(),
+      day: dayjsObj.date(),
       unixTime: dayjsObj.unix() * 1000,
     };
   }, [dayCode]);
