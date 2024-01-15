@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { TodoType } from "@/model/Todo";
-import { openTodoEditor } from "@/redux/actions/todoEditorAction";
+import { openTodoEditor } from "@/redux/actions/todoAction";
 import { FC, HTMLProps } from "react";
 import { useDispatch } from "react-redux";
 

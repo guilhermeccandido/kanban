@@ -4,12 +4,11 @@ import CheckBox from "../CustomizedCheckBox";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { TodoCheckRequest } from "@/lib/validators/todo";
-import { Types } from "mongoose";
 import dayjs from "dayjs";
 import { cn, getEarilerDate } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxState } from "@/redux/store";
-import { openTodoEditor } from "@/redux/actions/todoEditorAction";
+import { openTodoEditor } from "@/redux/actions/todoAction";
 
 type TaskProps = {
   todo: TodoType;

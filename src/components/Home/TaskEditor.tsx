@@ -6,19 +6,17 @@ import TaskEditorForm from "./TaskEditorForm";
 import { TodoType } from "@/model/Todo";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxState } from "@/redux/store";
-import { closeTodoEditor } from "@/redux/actions/todoEditorAction";
 import { useRouter } from "next/navigation";
+import { closeTodoEditor } from "@/redux/actions/todoAction";
 
 const TaskEditor: FC = () => {
   const isOpen = useSelector<ReduxState, boolean>(
-    (state) => state.todoEditor.isTodoEditorOpen,
+    (state) => state.todo.isTodoEditorOpen,
   );
   const task = useSelector<ReduxState, TodoType | null>(
-    (state) => state.todoEditor.targetTodo,
+    (state) => state.todo.targetTodo,
   );
-  const caller = useSelector<ReduxState, string>(
-    (state) => state.todoEditor.caller,
-  );
+  const taskEditorCaller = useSelector<ReduxState, string>((state) => state.todo.taskEditorCaller);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -28,7 +26,7 @@ const TaskEditor: FC = () => {
 
   const handleOnSuccess = () => {
     onClose();
-    router.push(caller);
+    router.push(taskEditorCaller);
     router.refresh();
   };
 

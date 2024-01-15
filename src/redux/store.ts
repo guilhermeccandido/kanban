@@ -10,13 +10,11 @@ import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import app from "@/redux/reducers/appReducer";
 import todo from "@/redux/reducers/todoReducer";
-import todoEditor from "@/redux/reducers/todoEditorReducer";
 import { createWrapper } from "next-redux-wrapper";
 
 const rootReducer = combineReducers({
   app,
   todo,
-  todoEditor,
 });
 
 const store = createStore(
@@ -41,4 +39,3 @@ export type TypedThunk<ReturnType = void> = ThunkAction<
 export const useTypedDispatch = () => useDispatch<TypedDispatch>();
 export const useTypedSelector: TypedUseSelectorHook<ReduxState> = useSelector;
 export default store;
-

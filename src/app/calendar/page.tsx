@@ -1,3 +1,4 @@
+import CalendarTaskCreator from "@/components/Calendar/CalendarTaskCreator";
 import TodoCalendar from "@/components/Calendar/TodoCalendar";
 import SideNavOpener from "@/components/SideNavOpener";
 import dbConnect from "@/lib/db";
@@ -27,6 +28,7 @@ const Calendar = async () => {
           <SideNavOpener pageIcon={<HomeIcon />} />
           <div className="pl-3 text-base">Calendar</div>
         </div>
+        <CalendarTaskCreator />
       </div>
       <TodoCalendar todos={todos} />
     </div>
