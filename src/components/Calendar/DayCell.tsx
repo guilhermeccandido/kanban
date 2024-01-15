@@ -58,11 +58,8 @@ const DayCell: FC<DayCellProps> = ({
       includedTodos.finished = todos.finished;
       numberOfIncludedTodos += todos.finished.length;
     }
-
-    console.log(includedTodos, todos, day);
+    // console.log(includedTodos, todos, day);
   };
-
-  getTodoCells(todos);
 
   return (
     <div className="flex-1 flex flex-col items-center border-r border-b border-zinc-300 overflow-hidden">

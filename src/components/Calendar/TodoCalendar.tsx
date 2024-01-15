@@ -118,7 +118,9 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
     currentMonth: number,
     todoHashmap: TodoHashmap,
   ) => {
-    const daysInMonth = dayjs().month(currentMonth).daysInMonth();
+    const daysInMonth = dayjs()
+      .month(currentMonth - 1)
+      .daysInMonth();
     const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
     const prevMonthYear = currentYear - (currentMonth === 1 ? 1 : 0);
     const nextMonth = (currentMonth + 1) % 13;
@@ -131,12 +133,12 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
 
     const firstDayOfMonth = dayjs()
       .year(currentYear)
-      .month(currentMonth)
+      .month(currentMonth - 1)
       .startOf("month")
       .day();
     const daysInPrevMonth = dayjs()
       .year(currentYear)
-      .month(currentMonth)
+      .month(currentMonth - 1)
       .subtract(1, "month")
       .daysInMonth();
 
