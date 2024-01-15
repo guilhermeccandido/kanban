@@ -1,5 +1,6 @@
 import CalendarTaskCreator from "@/components/Calendar/CalendarTaskCreator";
 import TodoCalendar from "@/components/Calendar/TodoCalendar";
+import TaskCreator from "@/components/Home/TaskCreator";
 import SideNavOpener from "@/components/SideNavOpener";
 import dbConnect from "@/lib/db";
 import { getAuthSession } from "@/lib/nextauthOptions";
@@ -31,6 +32,7 @@ const Calendar = async () => {
         <CalendarTaskCreator />
       </div>
       <TodoCalendar todos={todos} />
+      <TaskCreator />
     </div>
   );
 };
