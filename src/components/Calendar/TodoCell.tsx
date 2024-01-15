@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { TodoType } from "@/model/Todo";
 import { openTodoEditor } from "@/redux/actions/todoAction";
-import { FC, HTMLProps } from "react";
+import { FC, HTMLProps, MouseEvent } from "react";
 import { useDispatch } from "react-redux";
 
 type TodoCellProps = {
@@ -12,7 +12,11 @@ type TodoCellProps = {
 const TodoCell: FC<TodoCellProps> = ({ todos, className }) => {
   const dispatch = useDispatch();
 
-  const handleOpenTodoEditor = (todo: TodoType) => {
+  const handleOpenTodoEditor = (
+    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+    todo: TodoType,
+  ) => {
+    e.stopPropagation();
     dispatch(openTodoEditor(todo, "/calendar"));
   };
 
@@ -21,11 +25,11 @@ const TodoCell: FC<TodoCellProps> = ({ todos, className }) => {
       {todos?.map((todo) => (
         <div
           className={cn(
-            "w-full h-{20px} rounded-md border cursor-pointer",
+            "w-full h-{20px} rounded-md border cursor-pointer z-10",
             className,
           )}
           key={todo._id.toString()}
-          onClick={() => handleOpenTodoEditor(todo)}
+          onClick={(e) => handleOpenTodoEditor(e, todo)}
         >
           <span className="flex text-center">
             <span
