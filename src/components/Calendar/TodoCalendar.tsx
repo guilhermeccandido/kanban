@@ -12,7 +12,7 @@ import {
 } from "react";
 import DayCell from "./DayCell";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import TaskEditor from "../Home/TaskEditor";
+import TaskEditor from "../List/TaskEditor";
 import useResize from "@/hooks/useResize";
 
 type TodoCalendarProps = {

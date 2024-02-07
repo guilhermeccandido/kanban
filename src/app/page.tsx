@@ -2,7 +2,7 @@ import SideNavOpener from "@/components/SideNavOpener";
 import { HomeIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const Tasks = dynamic(() => import("@/components/Home/Tasks"), { ssr: false });
+const Tasks = dynamic(() => import("@/components/List/Tasks"), { ssr: false });
 
 const Home = async () => {
   return (

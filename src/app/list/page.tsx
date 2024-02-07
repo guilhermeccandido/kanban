@@ -1,6 +1,6 @@
-import HomeTaskCreator from "@/components/Home/HomeTaskCreator";
-import TaskCreator from "@/components/Home/TaskCreator";
-import TaskSorter from "@/components/Home/TaskSorter";
+import HomeTaskCreator from "@/components/List/HomeTaskCreator";
+import TaskCreator from "@/components/List/TaskCreator";
+import TaskSorter from "@/components/List/TaskSorter";
 import SideNavOpener from "@/components/SideNavOpener";
 import dbConnect from "@/lib/db";
 import { getAuthSession } from "@/lib/nextauthOptions";
@@ -8,7 +8,7 @@ import TodoModel, { TodoType } from "@/model/Todo";
 import { List } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const Tasks = dynamic(() => import("@/components/Home/Tasks"), { ssr: false });
+const Tasks = dynamic(() => import("@/components/List/Tasks"), { ssr: false });
 
 const Home = async () => {
   const session = await getAuthSession();
