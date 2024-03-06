@@ -38,7 +38,9 @@ export interface CloseTodoCreatorI {
   payload: null;
 }
 
-export type TaskCreatorDefaultValues = Partial<Pick<TodoType, "dueDate">>;
+export type TaskCreatorDefaultValues = Partial<
+  Pick<TodoType, "dueDate" | "state">
+>;
 export interface openTodoCreatorI {
   type: todoActionType.OPEN_TODO_CREATOR;
   payload: {
