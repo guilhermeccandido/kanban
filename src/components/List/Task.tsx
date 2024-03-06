@@ -29,7 +29,7 @@ const Task: FC<TaskProps> = ({ todo, checked = false }) => {
   };
 
   const handleOnSuccess = () => {
-    router.push("/");
+    router.push("/list");
     router.refresh();
   };
 
@@ -42,7 +42,7 @@ const Task: FC<TaskProps> = ({ todo, checked = false }) => {
         : earlierDueDate;
 
   const handleOpenTaskEditor = () => {
-    dispatch(openTodoEditor(todo, "/"));
+    dispatch(openTodoEditor(todo, "/list"));
   };
 
   return (

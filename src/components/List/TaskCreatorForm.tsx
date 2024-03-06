@@ -105,13 +105,12 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
             <Controller
               control={control}
               name="state"
-              defaultValue="todo"
               render={({ field }) => (
                 <CustomizedSelect
                   options={TASK_STATE_OPTIONS}
                   placeholder="Select the state"
                   onChange={field.onChange}
-                  defaultValue="todo"
+                  defaultValue={field.value ?? "todo"}
                 />
               )}
             />
@@ -148,7 +147,6 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
                       selected={field.value ? new Date(field.value) : undefined}
                       onSelect={(date) => {
                         const timestamp = date ? date.getTime() : undefined;
-                        console.log(date.getTime());
                         field.onChange(timestamp);
                       }}
                       initialFocus

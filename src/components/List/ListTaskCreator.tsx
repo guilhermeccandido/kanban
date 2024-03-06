@@ -4,11 +4,11 @@ import { openTodoCreator } from "@/redux/actions/todoAction";
 import { Plus } from "lucide-react";
 import { useDispatch } from "react-redux";
 
-const HomeTaskCreator = () => {
+const ListTaskCreator = () => {
   const dispatch = useDispatch();
 
   const handleOpenDialog = () => {
-    dispatch(openTodoCreator("/"));
+    dispatch(openTodoCreator("/list"));
   };
 
   return (
@@ -23,4 +23,4 @@ const HomeTaskCreator = () => {
   );
 };
 
-export default HomeTaskCreator;
+export default ListTaskCreator;

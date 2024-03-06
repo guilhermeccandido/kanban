@@ -148,7 +148,7 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
         const day = daysInPrevMonth - firstDayOfMonth + index + 1;
         const dayCode = `${prevMonthYear}-${
           prevMonth >= 10 ? prevMonth : "0" + prevMonth
-        }-${day}`;
+        }-${day >= 10 ? day : "0" + day}`;
         const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
         return (
           <DayCell
@@ -174,7 +174,7 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
       (_, index) => {
         const dayCode = `${nextMonthYear}-${
           nextMonth >= 10 ? nextMonth : "0" + nextMonth
-        }-${index}`;
+        }-${index + 1 >= 10 ? index + 1 : "0" + (index + 1)}`;
         const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
         return (
           <DayCell
@@ -191,7 +191,7 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
     const calendarDays = daysArray.map((day, index) => {
       const dayCode = `${currentYear}-${
         currentMonth >= 10 ? currentMonth : "0" + currentMonth
-      }-${day}`;
+      }-${day >= 10 ? day : "0" + day}`;
       const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
       return (
         <DayCell
@@ -280,7 +280,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
           </div>
         </div>
       </div>
-      <TaskEditor />
     </div>
   );
 };

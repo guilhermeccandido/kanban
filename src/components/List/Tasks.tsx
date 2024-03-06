@@ -92,7 +92,6 @@ const Tasks: FC<TasksProps> = ({ unFinishedTodos, finishedTodos }) => {
         {finishedTodos.length > 0 && (
           <FinishedTasksManager tasks={finishedTodos} />
         )}
-        <TaskEditor />
       </div>
     </>
   );

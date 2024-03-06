@@ -1,6 +1,11 @@
-import { Option } from "@/components/CustomizedSelect";
+import { TodoType } from "@/model/Todo";
 
-export const TASK_STATE_OPTIONS: Readonly<Option[]> = Object.freeze([
+export const TASK_STATE_OPTIONS: Readonly<
+  {
+    value: TodoType["state"];
+    title: string;
+  }[]
+> = Object.freeze([
   {
     value: "todo",
     title: "Todo",

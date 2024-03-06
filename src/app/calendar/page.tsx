@@ -32,7 +32,6 @@ const Calendar = async () => {
         <CalendarTaskCreator />
       </div>
       <TodoCalendar todos={todos} />
-      <TaskCreator />
     </div>
   );
 };
