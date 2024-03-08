@@ -14,6 +14,7 @@ type TodoColumnProp = {
 };
 
 const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
+
 	return (
 		<div className='bg-white h-full flex-1 py-2 rounded-md flex flex-col shadow-lg relative'>
 			<div className='text-center border-b border-zinc-100 py-1'>{title}</div>
