@@ -4,7 +4,6 @@ import dbConnect from "@/lib/db";
 import { getAuthSession } from "@/lib/nextauthOptions";
 import TodoModel, { TodoType } from "@/model/Todo";
 import { HomeIcon } from "lucide-react";
-import dynamic from "next/dynamic";
 
 const Home = async () => {
   const session = await getAuthSession();

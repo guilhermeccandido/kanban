@@ -3,7 +3,7 @@ import debug from './debug';
 
 const dbConnect = async () => {
 	try {
-		await connect(process.env.MONGODB_URI!, {
+		await connect(process.env.MONGODB_URL!, {
 			serverSelectionTimeoutMS: 5000,
 		});
 	} catch (error) {
