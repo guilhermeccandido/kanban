@@ -56,7 +56,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 						<TodoColumn
 							key={value}
 							title={title}
-							todos={todoColumeObj[value]}
+							todos={todoColumeObj[value] ?? []}
 							state={value}
 						/>
 					);
@@ -71,7 +71,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 						<TodoColumn
 							key={value}
 							title={title}
-							todos={todoColumeObj[value]}
+							todos={todoColumeObj[value] ?? []}
 							state={value}
 						/>
 					);
