@@ -12,9 +12,10 @@ type TodoColumnProp = {
 	title: string;
 	todos: TodoType[];
 	state: TodoType['state'];
+	handleDragging?: (e: MouseEvent | React.MouseEvent<HTMLDivElement>) => boolean;
 };
 
-const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
+const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state, handleDragging }) => {
 	const { setNodeRef, isOver } = useDroppable({ id: state });
 
 	return (
@@ -22,7 +23,7 @@ const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
 			<div className='text-center border-b border-zinc-100 py-1'>{title}</div>
 			<div className='flex-col flex-grow overflow-y-scroll' ref={setNodeRef}>
 				{todos?.map((todo, index) => {
-					return <TodoCard todo={todo} key={todo._id.toString()} />;
+					return <TodoCard todo={todo} key={todo._id.toString()} handleDragging={handleDragging} />;
 				})}
 			</div>
 			<HomeTaskCreator state={state} />

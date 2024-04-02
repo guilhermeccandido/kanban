@@ -11,6 +11,7 @@ import {
 type UseDraggableArgs = {
 	id: DnDId;
 	handleClick?: (e: MouseEvent) => void;
+	handleDragging?: (e: MouseEvent | React.MouseEvent<HTMLDivElement>) => void;
 };
 
 type Attributes = Partial<HtmlHTMLAttributes<HTMLDivElement>>;
@@ -23,24 +24,45 @@ type UseDraggableReturn = {
 
 const DRAGGED_THRESHOLD = 5;
 
-const useDraggable = ({ id, handleClick }: UseDraggableArgs): UseDraggableReturn => {
+const useDraggable = ({
+	id,
+	handleClick,
+	handleDragging,
+}: UseDraggableArgs): UseDraggableReturn => {
 	const [isDragging, setIsDragging] = useState(false);
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [adjustment, setAdjustment] = useState({ x: 0, y: 0 });
-	const { handleDragStart, handleDragging, handleDragEnd } =
-		useContext(DnDContext);
+	const {
+		handleDragStart,
+		handleDragging: _handleDragging,
+		handleDragEnd,
+	} = useContext(DnDContext);
 	const isDragged = useRef(false);
 	const originalPos = useRef({ x: 0, y: 0 });
 	const originalMousePos = useRef({ x: 0, y: 0 });
 	const nodeRef = useRef<HTMLElement | null>(null);
 	const setup = useRef(false);
+	const prevMouseMoveEvent = useRef<MouseEvent | null>(null);
+
+	useEffect(() => {
+		let intervalId: NodeJS.Timeout;
+		if (isDragging && handleDragging) {
+			intervalId = setInterval(() => {
+				if (!prevMouseMoveEvent.current) return;
+				handleDragging(prevMouseMoveEvent.current);
+			}, 100);
+		}
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, [isDragging, handleDragging]);
 
 	const reset = useCallback(() => {
 		setIsDragging(false);
 		setPosition({ x: 0, y: 0 });
 		setAdjustment({ x: 0, y: 0 });
 		isDragged.current = false;
-	}, [])
+	}, []);
 
 	const onMouseDown: React.MouseEventHandler<HTMLDivElement> = (
 		e: React.MouseEvent<HTMLDivElement>
@@ -48,7 +70,7 @@ const useDraggable = ({ id, handleClick }: UseDraggableArgs): UseDraggableReturn
 		e.preventDefault();
 		e.stopPropagation();
 		handleDragStart(e, id);
-		handleDragging(e);
+		_handleDragging(e);
 
 		setIsDragging(true);
 
@@ -62,8 +84,8 @@ const useDraggable = ({ id, handleClick }: UseDraggableArgs): UseDraggableReturn
 		originalMousePos.current = { x: e.clientX, y: e.clientY };
 
 		const originalRect = nodeRef.current?.getBoundingClientRect()!;
-		const originalX = originalRect.x 
-		const originalY = originalRect.y 
+		const originalX = originalRect.x;
+		const originalY = originalRect.y;
 		originalPos.current = { x: originalX, y: originalY };
 	};
 
@@ -78,8 +100,9 @@ const useDraggable = ({ id, handleClick }: UseDraggableArgs): UseDraggableReturn
 	useEffect(() => {
 		const handleMouseMove = (e: MouseEvent) => {
 			e.preventDefault();
-			handleDragging(e);
+			_handleDragging(e);
 			setPosition({ x: e.clientX, y: e.clientY });
+			prevMouseMoveEvent.current = e;
 			if (!isDragged.current) {
 				const diffX = Math.abs(e.clientX - originalMousePos.current.x);
 				const diffY = Math.abs(e.clientY - originalMousePos.current.y);

@@ -52,7 +52,22 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	const currentPosition = useRef({ x: 0, y: 0 });
 	const droppableRef = useRef<DroppableMap>(null);
 	const id = useRef<DnDId | null>(null);
+	const prevMouseMoveEvent = useRef<DndMouseEvent | null>(null);
 	const forceUpdate = useForceUpdate();
+
+	useEffect(() => {
+		let intervalId: NodeJS.Timeout;
+		if (isDragging && onDragging) {
+			intervalId = setInterval(() => {
+				if (!prevMouseMoveEvent.current) return;
+				onDragging(prevMouseMoveEvent.current);
+			}
+			, 100);
+		}
+		return () => {
+			clearInterval(intervalId);
+		}
+	}, [isDragging, onDragging]);
 
 	const reset = useCallback(() => {
 		setIsDragging(false);
@@ -76,7 +91,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	};
 
 	const handleDragStart = useCallback((e: DndMouseEvent, _id: DnDId) => {
-		// setIsDragging(true);
+		setIsDragging(true);
 		start.current = checkDroppableCollision(e);
 		initialPosition.current = { x: e.clientX, y: e.clientY };
 		currentPosition.current = { x: e.clientX, y: e.clientY };
@@ -84,10 +99,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	}, [])
 
 	const handleDragging = useCallback((e: DndMouseEvent) => {
-		if (onDragging) {
-			onDragging(e)
-		}
-
+		prevMouseMoveEvent.current = e;
 		currentPosition.current = { x: e.clientX, y: e.clientY };
 		const over = checkDroppableCollision(e);
 		if (over !== isOver.current) {

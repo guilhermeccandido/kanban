@@ -14,7 +14,7 @@ const throttle = (fn: Function, delay: number) => {
         const now = Date.now();
         if (now - lastRun < delay) return;
         lastRun = now;
-        fn(...args);
+        return fn(...args);
     };
 }
 
