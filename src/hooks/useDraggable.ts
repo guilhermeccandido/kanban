@@ -1,6 +1,7 @@
 import { DnDContext, DnDId } from '@/components/DnDContextProvider';
 import {
 	HtmlHTMLAttributes,
+	useCallback,
 	useContext,
 	useEffect,
 	useRef,
@@ -54,24 +55,23 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 			x: e.clientX - rect.x,
 			y: e.clientY - rect.y,
 		});
+		const originalRect = nodeRef.current?.getBoundingClientRect()!;
+		const nodeStyle = window.getComputedStyle(nodeRef.current!);
+		const marginLeft = parseFloat(nodeStyle.marginLeft);
+		const originalX = originalRect.x - marginLeft
+		const originalY = originalRect.y 
+		originalPos.current = { x: originalX, y: originalY };
 	};
 
-	const setNodeRef = (node: HTMLElement | null) => {
+	const setNodeRef = useCallback((node: HTMLElement | null) => {
 		if (setup.current) return;
 		setup.current = true;
 		if (!node) return;
 
 		nodeRef.current = node;
-	};
+	}, []);
 
 	useEffect(() => {
-		if (!isDragging) {
-			const originalRect = nodeRef.current?.getBoundingClientRect();
-			const originalX = originalRect?.x || 0;
-			const originalY = originalRect?.y || 0;
-			originalPos.current = { x: originalX, y: originalY };
-		}
-
 		const handleMouseMove = (e: MouseEvent) => {
 			e.preventDefault();
 			handleDragging(e);
@@ -102,13 +102,13 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 	const attributes: Attributes = {
 		style: {
 			transform: isDragging
-				? `translate(${position.x - originalPos.current.x - adjustment.x }px, ${
+				? `translate(${position.x - originalPos.current.x - adjustment.x}px, ${
 						position.y - originalPos.current.y - adjustment.y
 				  }px)`
 				: 'none',
 			cursor: isDragging ? 'grabbing' : 'grab',
 			position: isDragging ? 'absolute' : 'relative',
-		    zIndex: isDragging ? 2 : 1,
+			zIndex: isDragging ? 2 : 1,
 			opacity: isDragging ? 0.5 : 1,
 		},
 		onMouseDown: onMouseDown,

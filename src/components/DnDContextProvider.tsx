@@ -11,6 +11,7 @@ type OnDragEndEvent = {
 type DndContextProps = {
 	children: React.ReactNode;
 	onDragEnd?: (e: OnDragEndEvent) => void;
+	onDragging?: (e: DndMouseEvent) => void;
 };
 
 type DroppableMap = {
@@ -43,8 +44,8 @@ const initialState = {
 
 export const DnDContext = createContext<DndContext>(initialState);
 
-const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd }) => {
-	// const [isDragging, setIsDragging] = useState(false);
+const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDragging }) => {
+	const [isDragging, setIsDragging] = useState(false);
 	const isOver = useRef<DnDId | null>(null);
 	const start = useRef<DnDId | null>(null);
 	const initialPosition = useRef({ x: 0, y: 0 });
@@ -54,7 +55,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd }) => {
 	const forceUpdate = useForceUpdate();
 
 	const reset = useCallback(() => {
-		// setIsDragging(false);
+		setIsDragging(false);
 		isOver.current = null;
 		start.current = null;
 		initialPosition.current = { x: 0, y: 0 };
@@ -83,6 +84,10 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd }) => {
 	}, [])
 
 	const handleDragging = useCallback((e: DndMouseEvent) => {
+		if (onDragging) {
+			onDragging(e)
+		}
+
 		currentPosition.current = { x: e.clientX, y: e.clientY };
 		const over = checkDroppableCollision(e);
 		if (over !== isOver.current) {
@@ -122,7 +127,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd }) => {
 	}, [onDragEnd, reset]);
 
 	const value = {
-		// isDragging,
+		isDragging,
 		isOver: isOver.current,
 		handleDragStart,
 		handleDragging,
