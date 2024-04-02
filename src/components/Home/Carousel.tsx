@@ -13,7 +13,7 @@ const Carousel: FC<ResponsiveCarouselProps> = ({
 	gap,
 	childrenWidth = 577,
 }) => {
-	const [current, setCurrent] = useState(0);
+	const [current, setCurrent] = useState(value);
 	const prevValue = useRef(value);
 
 	const numberOfChildren = Children.count(children);

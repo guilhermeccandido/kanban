@@ -44,7 +44,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 		return () => {
 			window.removeEventListener('resize', updateWidth);
 		};
-	}, [carouselRef.current]);
+	}, [carouselRef.current, md]);
 
 	const handleSlideTo = (index: number) => {
 		setValue(index);
@@ -113,7 +113,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 
 	return (
 		<DndContextProvider onDragEnd={handleDragEnd}>
-			{md! ? (
+			{typeof md === 'undefined' || md ? (
 				<div className='h-[90%] flex gap-2'>
 					{TASK_STATE_OPTIONS.map(({ value, title }) => {
 						return (
@@ -131,7 +131,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 					<Carousel
 						value={value}
 						gap={32}
-						childrenWidth={childrenWidth || undefined}
+						childrenWidth={childrenWidth}
 					>
 						{TASK_STATE_OPTIONS.map(({ value, title }) => {
 							return (
