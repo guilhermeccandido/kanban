@@ -10,6 +10,7 @@ import {
 
 type UseDraggableArgs = {
 	id: DnDId;
+	handleClick?: (e: MouseEvent) => void;
 };
 
 type Attributes = Partial<HtmlHTMLAttributes<HTMLDivElement>>;
@@ -18,26 +19,28 @@ type UseDraggableReturn = {
 	setNodeRef: (node: HTMLElement | null) => void;
 	attributes: Attributes;
 	isDragging: boolean;
-	dragged: boolean;
-	setDragged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
+const DRAGGED_THRESHOLD = 5;
+
+const useDraggable = ({ id, handleClick }: UseDraggableArgs): UseDraggableReturn => {
 	const [isDragging, setIsDragging] = useState(false);
-	const [dragged, setDragged] = useState(false);
 	const [position, setPosition] = useState({ x: 0, y: 0 });
 	const [adjustment, setAdjustment] = useState({ x: 0, y: 0 });
 	const { handleDragStart, handleDragging, handleDragEnd } =
 		useContext(DnDContext);
+	const isDragged = useRef(false);
 	const originalPos = useRef({ x: 0, y: 0 });
+	const originalMousePos = useRef({ x: 0, y: 0 });
 	const nodeRef = useRef<HTMLElement | null>(null);
 	const setup = useRef(false);
 
-	const reset = () => {
+	const reset = useCallback(() => {
 		setIsDragging(false);
 		setPosition({ x: 0, y: 0 });
 		setAdjustment({ x: 0, y: 0 });
-	};
+		isDragged.current = false;
+	}, [])
 
 	const onMouseDown: React.MouseEventHandler<HTMLDivElement> = (
 		e: React.MouseEvent<HTMLDivElement>
@@ -55,10 +58,11 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 			x: e.clientX - rect.x,
 			y: e.clientY - rect.y,
 		});
+
+		originalMousePos.current = { x: e.clientX, y: e.clientY };
+
 		const originalRect = nodeRef.current?.getBoundingClientRect()!;
-		const nodeStyle = window.getComputedStyle(nodeRef.current!);
-		const marginLeft = parseFloat(nodeStyle.marginLeft);
-		const originalX = originalRect.x - marginLeft
+		const originalX = originalRect.x 
 		const originalY = originalRect.y 
 		originalPos.current = { x: originalX, y: originalY };
 	};
@@ -76,12 +80,19 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 			e.preventDefault();
 			handleDragging(e);
 			setPosition({ x: e.clientX, y: e.clientY });
-			setDragged(true);
+			if (!isDragged.current) {
+				const diffX = Math.abs(e.clientX - originalMousePos.current.x);
+				const diffY = Math.abs(e.clientY - originalMousePos.current.y);
+				if (diffX > DRAGGED_THRESHOLD || diffY > DRAGGED_THRESHOLD) {
+					isDragged.current = true;
+				}
+			}
 		};
 
 		const handleMouseUp = (e: MouseEvent) => {
 			e.preventDefault();
 			handleDragEnd(e);
+			!isDragged.current && handleClick && handleClick(e);
 			reset();
 		};
 
@@ -97,7 +108,7 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 			window.removeEventListener('mousemove', handleMouseMove);
 			window.removeEventListener('mouseup', handleMouseUp);
 		};
-	}, [isDragging, handleDragEnd, handleDragging]);
+	}, [isDragging, handleDragEnd, handleDragging, reset, handleClick]);
 
 	const attributes: Attributes = {
 		style: {
@@ -107,7 +118,7 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 				  }px)`
 				: 'none',
 			cursor: isDragging ? 'grabbing' : 'grab',
-			position: isDragging ? 'absolute' : 'relative',
+			position: isDragged.current ? 'absolute' : 'relative',
 			zIndex: isDragging ? 2 : 1,
 			opacity: isDragging ? 0.5 : 1,
 		},
@@ -118,8 +129,6 @@ const useDraggable = ({ id }: UseDraggableArgs): UseDraggableReturn => {
 		setNodeRef,
 		attributes,
 		isDragging: isDragging,
-		dragged,
-		setDragged,
 	};
 };
 

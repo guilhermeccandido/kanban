@@ -13,22 +13,18 @@ type TodoProps = {
 };
 
 const TodoCard: FC<TodoProps> = ({ todo }) => {
-	const { setNodeRef, attributes, isDragging, dragged, setDragged} = useDraggable({
-		id: todo._id.toString(),
-	});
 	const dispatch = useDispatch();
-
-	const handleOpenTodoEditor = (e: React.MouseEvent<HTMLDivElement>) => {
-		setDragged(false);
-		if (dragged) return;
-		e.stopPropagation();
-		dispatch(openTodoEditor(todo, '/'));
-	};
+	const { setNodeRef, attributes, isDragging} = useDraggable({
+		id: todo._id.toString(),
+		handleClick: (e) => {
+			e.stopPropagation();
+			dispatch(openTodoEditor(todo, '/'));
+		}
+	});
 
 	return (
 		<div
 			className='border-zinc-100 hover:shadow-md border rounded mb-1 px-2 py-1 w-[95%] mx-auto flex flex-col cursor-pointer bg-white'
-			onClick={handleOpenTodoEditor}
 			ref={setNodeRef}
 			{...attributes}
 		>
