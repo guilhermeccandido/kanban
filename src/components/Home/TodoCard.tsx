@@ -70,7 +70,7 @@ const TodoCard: FC<TodoProps> = ({ todo, handleDragging }) => {
 			<div className='font-bold overflow-hidden whitespace-nowrap text-ellipsis'>
 				{todo.title}
 			</div>
-			<div className='overflow-hidden whitespace-nowrap text-ellipsis line-clamp-3'>
+			<div className='overflow-hidden whitespace-nowrap text-ellipsis line-clamp-3 text-sm'>
 				{todo?.description}
 			</div>
 			<div className='text-xs text-right'>
