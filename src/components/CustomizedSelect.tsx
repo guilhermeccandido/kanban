@@ -15,16 +15,18 @@ type CustomizedSelectProps = {
 	options: Readonly<Option[]>;
 	placeholder?: string;
 	onChange?: (value: string) => void;
-	defaultValue?: string;
+	value?: Option;
 };
 
 const CustomizedSelect: FC<CustomizedSelectProps> = ({
 	options,
 	placeholder = 'Please select',
 	onChange = () => {},
-	defaultValue = '',
+	value,
 }) => {
-	const [value, setValue] = useState<Option | null>(options.find((option) => option.value === defaultValue) || null);
+	const [privateValue, setPrivateValue] = useState<Option | null>(
+		value ? options.find((option) => option.value === value) || null : null
+	);
 	const [open, setOpen] = useState(false);
 	const [up, setUp] = useState(false);
 	const selectorRef = useRef<HTMLDivElement>(null);
@@ -42,9 +44,9 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 	};
 
 	const handleOnSelect = (option: Option) => {
-		setValue(option);
+		setPrivateValue(option);
 		setOpen(false);
-		onChange(option.value)
+		onChange(option.value);
 	};
 
 	const selectorHeight =
@@ -62,21 +64,33 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 					onClick={handleOpen}
 					className='py-2 px-4 flex justify-between items-center cursor-pointer'
 				>
-					<div className={cn('pr-4', !value && 'text-muted-foreground')}>
-						{value?.title || placeholder}
+					<div
+						className={cn(
+							'pr-4',
+							(value !== null || privateValue !== null) &&
+								'text-muted-foreground'
+						)}
+					>
+						{value?.title || privateValue?.title || placeholder}
 					</div>
 					<ChevronDown className='text-sm w-3 h-3' />
 				</div>
 			</div>
 			{open && (
-				<div className='absolute bg-white my-1 w-[180px] border rounded-md z-10'
+				<div
+					className='absolute bg-white my-1 w-[180px] border rounded-md z-10'
 					style={{ top: up ? `-${selectorHeight}px` : '' }}
 				>
 					{orderedOptions.map((option) => (
 						<div
 							key={option.value}
 							onClick={() => handleOnSelect(option)}
-							className={cn('py-2 px-4 flex justify-between items-center cursor-pointer', value?.value === option.value && 'bg-accent')}
+							className={cn(
+								'py-2 px-4 flex justify-between items-center cursor-pointer',
+								(value?.value === option.value ||
+									privateValue?.value === option.value) &&
+									'bg-accent'
+							)}
 						>
 							<div className='pr-4'>{option.title}</div>
 							{option.render}

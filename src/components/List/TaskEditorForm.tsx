@@ -30,6 +30,7 @@ import { Calendar } from '../ui/calendar';
 import { TASK_STATE_OPTIONS } from '@/lib/const';
 import dayjs from 'dayjs';
 import { TodoType } from '@/model/Todo';
+import { Textarea } from '../ui/textarea';
 
 type TaskCreatorFormProps = {
 	handleOnSuccess: () => void;
@@ -51,6 +52,9 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 		control,
 	} = useForm<TodoEditRequest>({
 		resolver: zodResolver(TodoCreateValidator),
+		defaultValues: {
+			...task,
+		},
 	});
 
 	const { mutate: submitCreateTodoTask, isLoading } = useMutation({
@@ -106,7 +110,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 				submitCreateTodoTask(e);
 			})}
 		>
-			<Card>
+			<Card className='max-h-[70%] overflow-scroll'>
 				<CardHeader>
 					<CardTitle>Edit Todo Task</CardTitle>
 				</CardHeader>
@@ -117,10 +121,9 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 						</Label>
 						<Input
 							id='name'
-							className='w-[400px]'
+							className='max-w-[400px]'
 							size={32}
 							{...register('title')}
-							defaultValue={task.title}
 						/>
 						<ErrorMessage msg={errors.title?.message} />
 					</div>
@@ -137,7 +140,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 									options={TASK_STATE_OPTIONS}
 									placeholder='Select the state'
 									onChange={field.onChange}
-									defaultValue={task.state}
+									value={field.value}
 								/>
 							)}
 						/>
@@ -157,7 +160,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 										<Button
 											variant={'outline'}
 											className={cn(
-												'w-[280px] justify-start text-left font-normal',
+												'max-w-[280px] justify-start text-left font-normal',
 												!field.value && 'text-muted-foreground'
 											)}
 										>
@@ -200,7 +203,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 										<Button
 											variant={'outline'}
 											className={cn(
-												'w-[280px] justify-start text-left font-normal',
+												'max-w-[280px] justify-start text-left font-normal',
 												!field.value && 'text-muted-foreground'
 											)}
 										>
@@ -227,9 +230,20 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 								</Popover>
 							)}
 						/>
+						<ErrorMessage msg={errors.plannedFinishDate?.message} />
 					</div>
-					<ErrorMessage msg={errors.plannedFinishDate?.message} />
+					<div className='relative grid gap-1 pb-4'>
+						<Label className='text-xl' htmlFor='state'>
+							Description
+						</Label>
+						<Textarea
+							className='resize-none'
+							id='description'
+							{...register('description')}
+						/>
+					</div>
 				</CardContent>
+
 				<CardFooter className='gap-2'>
 					<Button isLoading={isLoading}>Edit Task</Button>
 					<Button

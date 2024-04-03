@@ -21,7 +21,7 @@ const Home = async () => {
       Owner: user.id,
       isDeleted: false,
     })
-      .select({ title: 1, state: 1, _id: 1, dueDate: 1, plannedFinishDate: 1 })
+      .select({ title: 1, state: 1, _id: 1, dueDate: 1, plannedFinishDate: 1, description: 1 })
       .sort({ createdAt: -1 })
       .exec();
     const todo = JSON.parse(JSON.stringify(result));
