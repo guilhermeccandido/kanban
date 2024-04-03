@@ -15,7 +15,7 @@ type CustomizedSelectProps = {
 	options: Readonly<Option[]>;
 	placeholder?: string;
 	onChange?: (value: string) => void;
-	value?: Option;
+	value?: Option['value'];
 };
 
 const CustomizedSelect: FC<CustomizedSelectProps> = ({
