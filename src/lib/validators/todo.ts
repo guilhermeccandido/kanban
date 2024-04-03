@@ -1,4 +1,3 @@
-import dayjs, { Dayjs } from "dayjs";
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 
@@ -48,6 +47,11 @@ export const TodoEditValidator = z
     },
   );
 
+export const TodoDeleteValidator = z.object({
+  id: z.custom<ObjectId>(),
+});
+
 export type TodoCreateRequest = z.infer<typeof TodoCreateValidator>;
 export type TodoCheckRequest = z.infer<typeof TodoCheckValidator>;
 export type TodoEditRequest = z.infer<typeof TodoEditValidator>;
+export type TodoDeleteRequest = z.infer<typeof TodoDeleteValidator>;

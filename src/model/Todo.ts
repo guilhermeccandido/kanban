@@ -26,6 +26,9 @@ class Todo {
 
 	@prop({ ref: () => 'User', required: true })
 	public Owner!: Ref<User>;
+
+	@prop({ type: () => Boolean, default: false })
+	public isDeleted!: boolean;
 }
 
 export type TodoType = Todo & { _id: Types.ObjectId };
