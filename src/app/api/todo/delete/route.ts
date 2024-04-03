@@ -1,8 +1,8 @@
 import dbConnect from '@/lib/db';
+import debug from '@/lib/debug';
 import { getAuthSession } from '@/lib/nextauthOptions';
 import { TodoDeleteValidator } from '@/lib/validators/todo';
 import TodoModel from '@/model/Todo';
-import { debug } from 'console';
 
 export async function DELETE(req) {
 	try {
