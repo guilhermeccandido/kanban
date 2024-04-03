@@ -18,7 +18,7 @@ import { Label } from '../ui/label';
 import CustomizedSelect from '../CustomizedSelect';
 import { useMutation } from 'react-query';
 import { FC, memo } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
 	Popover,
 	PopoverContent,
@@ -31,6 +31,7 @@ import { TASK_STATE_OPTIONS } from '@/lib/const';
 import dayjs from 'dayjs';
 import { TodoType } from '@/model/Todo';
 import { Textarea } from '../ui/textarea';
+import { useToast } from '../ui/use-toast';
 
 type TaskCreatorFormProps = {
 	handleOnSuccess: () => void;
@@ -45,6 +46,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 	handleOnSuccess,
 	task,
 }) => {
+	const { axiosToast } = useToast();
 	const {
 		handleSubmit,
 		register,
@@ -79,8 +81,8 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 		onSuccess: () => {
 			handleOnSuccess();
 		},
-		onError: (error) => {
-			console.log(error);
+		onError: (error: AxiosError) => {
+			axiosToast(error);
 		},
 	});
 
@@ -95,8 +97,8 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 		onSuccess: () => {
 			handleOnSuccess();
 		},
-		onError: (error) => {
-			console.log(error);
+		onError: (error: AxiosError) => {
+			axiosToast(error);
 		},
 	});
 

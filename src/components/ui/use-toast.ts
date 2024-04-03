@@ -2,6 +2,7 @@
 import * as React from 'react';
 
 import type { ToastActionElement, ToastProps } from '@/components/ui/toast';
+import { AxiosError } from 'axios';
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;
@@ -171,6 +172,15 @@ function toast({ delay = 0, ...props }: Toast) {
 	};
 }
 
+function axiosToast(error: AxiosError) {
+	toast({
+		variant: 'destructive',
+		title: 'Error',
+		description: error.response?.data || error.message,
+		duration: 5000,
+	});
+}
+
 function useToast() {
 	const [state, setState] = React.useState<State>(memoryState);
 
@@ -187,6 +197,7 @@ function useToast() {
 	return {
 		...state,
 		toast,
+		axiosToast,
 		dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
 	};
 }

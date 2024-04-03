@@ -5,34 +5,23 @@ import { FC, MouseEvent, useState } from 'react';
 
 type CheckBoxProps = {
 	classname?: string;
-	onChange?: (value: boolean) => Response | Promise<Response | AxiosResponse>;
-    onSuccess?: () => void;
+	onChange?: (
+		value: boolean
+	) => Response | Promise<Response | AxiosResponse> | void;
 	async?: boolean;
-	defaultChecked?: boolean;
+	check?: boolean;
 };
 
-const CheckBox: FC<CheckBoxProps> = ({
-	classname,
-	onChange,
-	onSuccess,
-	async,
-	defaultChecked,
-}) => {
-	const [checked, setChecked] = useState(defaultChecked || false);
+const CheckBox: FC<CheckBoxProps> = ({ classname, onChange, check }) => {
+	const [privateChecked, setPrivateChecked] = useState(check || false);
 
 	const handleOnClick = async (e: MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
-		setChecked(!checked);
-
-		if (async && onChange) {
-			const respone = await onChange(!checked);
-			if (respone.status !== 200) {
-				setChecked(!checked);
-			} else {
-                onSuccess && onSuccess();
-            }
-		}
+		setPrivateChecked((prev) => !prev);
+		await onChange?.(privateChecked);
 	};
+
+	const majorCheck = typeof check === 'boolean' ? check : privateChecked;
 
 	return (
 		<div
@@ -42,7 +31,9 @@ const CheckBox: FC<CheckBoxProps> = ({
 			)}
 			onClick={handleOnClick}
 		>
-			{checked && <Check className='relative w-4 h-4 left-[1px] top-[1px]' />}
+			{majorCheck && (
+				<Check className='relative w-4 h-4 left-[1px] top-[1px]' />
+			)}
 		</div>
 	);
 };

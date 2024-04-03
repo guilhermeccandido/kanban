@@ -2,15 +2,19 @@
 
 import useBreakpoint from '@/hooks/useBreakpoint';
 import TodoColumn from './TodoColumn';
-import { FC, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TodoType } from '@/model/Todo';
 import { TASK_STATE_OPTIONS } from '@/lib/const';
 import Carousel from './Carousel';
 import CarouselButton from './CarouselButton';
 import DndContextProvider from '../DnDContextProvider';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { throttle } from '@/lib/helper';
+import { useMutation } from 'react-query';
+import { TodoEditRequest } from '@/lib/validators/todo';
+import { useToast } from '../ui/use-toast';
+import { ObjectId } from 'mongodb';
 
 type TodoColumnManagerProp = {
 	todos: TodoType[];
@@ -20,16 +24,22 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 	const { md } = useBreakpoint();
 	const [value, setValue] = useState(0);
 	const [childrenWidth, setChildrenWidth] = useState(0);
+	const [todoColumeObj, setTodoColumeObj] = useState({});
 	const carouselRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
-	const todoColumeObj = todos.reduce((acc, todo) => {
-		if (!Object.prototype.hasOwnProperty.call(acc, todo.state)) {
-			acc[todo.state] = [todo];
-		} else {
-			acc[todo.state].push(todo);
-		}
-		return acc;
-	}, {});
+	const { axiosToast } = useToast();
+
+	useEffect(() => {
+		const todoColumeObj = todos.reduce((acc, todo) => {
+			if (!Object.prototype.hasOwnProperty.call(acc, todo.state)) {
+				acc[todo.state] = [todo];
+			} else {
+				acc[todo.state].push(todo);
+			}
+			return acc;
+		}, {});
+		setTodoColumeObj(todoColumeObj);
+	}, [todos]);
 
 	useEffect(() => {
 		const updateWidth = () => {
@@ -46,6 +56,26 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 		};
 	}, [carouselRef.current, md]);
 
+	const { mutate: handleUpdateState } = useMutation({
+		mutationFn: async ({
+			id,
+			state,
+			from,
+		}: { from: TodoType['state'] } & TodoEditRequest) => {
+			handleChangeState(id, state, from);
+			const result = await axios.patch('/api/todo/edit', { id, state });
+			return result;
+		},
+		onSuccess: () => {
+			router.push('/');
+			router.refresh();
+		},
+		onError: (error: AxiosError) => {
+			handleResetState();
+			axiosToast(error);
+		},
+	});
+
 	const handleSlideTo = (index: number) => {
 		setValue(index);
 	};
@@ -57,13 +87,10 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 		const payload = {
 			id: item,
 			state: over,
+			from,
 		};
 
-		const result = await axios.patch('/api/todo/edit', payload);
-		if (result.status === 200) {
-			router.push('/');
-			router.refresh();
-		}
+		await handleUpdateState(payload);
 	};
 
 	const scrollLeft = useMemo(
@@ -111,6 +138,30 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 		[md, scrollLeft, scrollRight]
 	);
 
+	const handleChangeState = useCallback(
+		(id: ObjectId, start: TodoType['state'], from: TodoType['state']) => {
+			const newTodoColumeObj = { ...todoColumeObj };
+			console.log(newTodoColumeObj);
+			const todo = newTodoColumeObj[from].find((todo) => todo._id === id);
+			console.log(todo);
+			if (!todo) return;
+			newTodoColumeObj[from] = newTodoColumeObj[from].filter(
+				(todo) => todo._id !== id
+			);
+			if (!Object.prototype.hasOwnProperty.call(newTodoColumeObj, start)) {
+				newTodoColumeObj[start] = [todo];
+			} else {
+				newTodoColumeObj[start].push(todo);
+			}
+			setTodoColumeObj(newTodoColumeObj);
+		},
+		[todoColumeObj]
+	);
+
+	const handleResetState = useCallback(() => {
+		setTodoColumeObj(todoColumeObj);
+	}, [todoColumeObj]);
+
 	return (
 		<DndContextProvider onDragEnd={handleDragEnd}>
 			{typeof md === 'undefined' || md ? (
@@ -128,11 +179,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
 				</div>
 			) : (
 				<div className='h-[85%]' ref={carouselRef}>
-					<Carousel
-						value={value}
-						gap={32}
-						childrenWidth={childrenWidth}
-					>
+					<Carousel value={value} gap={32} childrenWidth={childrenWidth}>
 						{TASK_STATE_OPTIONS.map(({ value, title }) => {
 							return (
 								<TodoColumn

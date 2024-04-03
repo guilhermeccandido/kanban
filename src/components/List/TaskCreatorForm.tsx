@@ -14,7 +14,7 @@ import { Label } from '../ui/label';
 import CustomizedSelect, { Option } from '../CustomizedSelect';
 import { useMutation } from 'react-query';
 import { FC, memo } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import {
 	Popover,
@@ -28,6 +28,7 @@ import { TASK_STATE_OPTIONS } from '@/lib/const';
 import dayjs from 'dayjs';
 import { TaskCreatorDefaultValues } from '@/redux/actions/todoAction';
 import { Textarea } from '../ui/textarea';
+import { useToast } from '../ui/use-toast';
 
 type TaskCreatorFormProps = {
 	handleOnSuccess: () => void;
@@ -42,7 +43,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 	handleOnSuccess,
 	taskCreatorDefaultValues,
 }) => {
-	const router = useRouter();
+	const { axiosToast } = useToast();
 	const {
 		handleSubmit,
 		register,
@@ -71,8 +72,8 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 		onSuccess: () => {
 			handleOnSuccess();
 		},
-		onError: (error) => {
-			console.log(error);
+		onError: (error: AxiosError) => {
+			axiosToast(error);
 		},
 	});
 
