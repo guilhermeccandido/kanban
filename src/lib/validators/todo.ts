@@ -4,7 +4,7 @@ import { z } from "zod";
 export const TodoCreateValidator = z
   .object({
     title: z.string().min(1).max(100),
-    description: z.string().min(1).max(1000).optional(),
+    description: z.string().max(1000).optional(),
     state: z.enum(["todo", "in-progress", "review", "done"]),
     dueDate: z.number().int().positive().optional(),
     plannedFinishDate: z.number().int().positive().optional(),
@@ -30,7 +30,7 @@ export const TodoEditValidator = z
   .object({
     id: z.custom<ObjectId>(),
     title: z.string().min(1).max(100).optional(),
-    description: z.string().min(1).max(1000).optional(),
+    description: z.string().max(1000).optional(),
     state: z.enum(["todo", "in-progress", "review", "done"]),
     dueDate: z.number().int().positive().optional(),
     plannedFinishDate: z.number().int().positive().optional(),
