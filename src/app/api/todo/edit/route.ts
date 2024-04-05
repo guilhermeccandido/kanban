@@ -10,17 +10,17 @@ export async function PATCH(req) {
         return new Response('Error', { status: 500 })
         const session = await getAuthSession();
 
-        if (!session?.user) return new Response('Unauthorized', { status: 401 });
+        if (!session || !session?.user) return new Response('Unauthorized', { status: 401 });
 
         const body = await req.json();
 
         const { id, title, description, state, dueDate, plannedFinishDate } = TodoEditValidator.parse(body);
 
         await dbConnect();
-        const [record] = await TodoModel.find({ _id: id, Owner: session.user.id });
+        const [record] = await TodoModel.find({ _id: id, Owner: session!.user!.id });
         if (!record) return new Response('Record Not Found', { status: 404 });
 
-        await TodoModel.updateOne({ _id: id, Owner: session.user.id }, {
+        await TodoModel.updateOne({ _id: id, Owner: session!.user!.id }, {
             title,
             description,
             state,

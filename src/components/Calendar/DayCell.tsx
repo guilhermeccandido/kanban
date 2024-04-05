@@ -106,7 +106,7 @@ const DayCell: FC<DayCellProps> = ({
 				ddlType='plannedDeadline'
 			/>
 			<TodoCell todos={includedTodos?.todos.finished} ddlType='finished' />
-			{includedTodos?.numberOfHiddenTodo > 0 && (
+			{includedTodos && includedTodos?.numberOfHiddenTodo > 0 && (
 				<div className='px-2 w-full text-sm overflow-hidden whitespace-nowrap text-ellipsis text-center'>
 					{includedTodos?.numberOfHiddenTodo} todo hidden
 				</div>

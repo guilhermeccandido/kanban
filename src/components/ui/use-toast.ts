@@ -176,7 +176,7 @@ function axiosToast(error: AxiosError) {
 	toast({
 		variant: 'destructive',
 		title: 'Error',
-		description: error.response?.data || error.message,
+		description: error.response?.data as string || error.message,
 		duration: 5000,
 	});
 }

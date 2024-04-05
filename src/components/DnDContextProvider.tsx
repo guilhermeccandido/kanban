@@ -15,7 +15,7 @@ type DndContextProps = {
 };
 
 type DroppableMap = {
-	[key: string]: {
+	[key: DnDId]: {
 		node: HTMLElement;
 	};
 };
@@ -50,7 +50,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	const start = useRef<DnDId | null>(null);
 	const initialPosition = useRef({ x: 0, y: 0 });
 	const currentPosition = useRef({ x: 0, y: 0 });
-	const droppableRef = useRef<DroppableMap>(null);
+	const droppableRef = useRef<DroppableMap | null>(null);
 	const id = useRef<DnDId | null>(null);
 	const prevMouseMoveEvent = useRef<DndMouseEvent | null>(null);
 	const forceUpdate = useForceUpdate();
@@ -86,8 +86,8 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	};
 
 	const removeDroppable = (id: DnDId) => {
-		const { [id]: _, ...rest } = droppableRef.current;
-		droppableRef.current = rest;
+    if (!droppableRef.current) return;
+    delete droppableRef.current[id];
 	};
 
 	const handleDragStart = useCallback((e: DndMouseEvent, _id: DnDId) => {
@@ -109,7 +109,7 @@ const DndContextProvider: FC<DndContextProps> = ({ children, onDragEnd, onDraggi
 	}, [])
 
 	const checkDroppableCollision = (e: DndMouseEvent) => {
-		let maxId = null;
+		let maxId: DnDId | null = null;
 		for (const id in droppableRef.current) {
 			const { node } = droppableRef.current[id];
 			const rect = node.getBoundingClientRect();

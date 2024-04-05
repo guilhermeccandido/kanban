@@ -2,9 +2,10 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from './mongodb';
 import { AuthOptions, getServerSession } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { Adapter } from 'next-auth/adapters';
 
 export const nextauthOptions: AuthOptions = {
-	adapter: MongoDBAdapter(clientPromise),
+	adapter: MongoDBAdapter(clientPromise) as Adapter,
     secret: process.env.AUTH_SECRET!,
 	session: {
 		strategy: 'jwt',

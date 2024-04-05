@@ -1,7 +1,9 @@
 "use client";
 
+import useResize from "@/hooks/useResize";
 import { TodoType } from "@/model/Todo";
 import dayjs from "dayjs";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   FC,
   useCallback,
@@ -11,9 +13,6 @@ import {
   useState,
 } from "react";
 import DayCell from "./DayCell";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import TaskEditor from "../List/TaskEditor";
-import useResize from "@/hooks/useResize";
 
 type TodoCalendarProps = {
   todos: TodoType[];
@@ -154,7 +153,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
           <DayCell
             key={dayCode}
             dayCode={dayCode}
-            day={day}
             todos={todos}
             numberOfTaskdisplaying={numberOfTaskdisplaying}
           />
@@ -180,7 +178,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
           <DayCell
             key={dayCode}
             dayCode={dayCode}
-            day={index + 1}
             todos={todos}
             numberOfTaskdisplaying={numberOfTaskdisplaying}
           />
@@ -197,7 +194,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
         <DayCell
           key={dayCode}
           dayCode={dayCode}
-          day={day}
           todos={todos}
           numberOfTaskdisplaying={numberOfTaskdisplaying}
         />

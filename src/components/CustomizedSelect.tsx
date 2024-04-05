@@ -71,7 +71,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 								'text-muted-foreground'
 						)}
 					>
-						{value?.title || privateValue?.title || placeholder}
+						{value || privateValue?.title || placeholder}
 					</div>
 					<ChevronDown className='text-sm w-3 h-3' />
 				</div>
@@ -87,7 +87,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 							onClick={() => handleOnSelect(option)}
 							className={cn(
 								'py-2 px-4 flex justify-between items-center cursor-pointer',
-								(value?.value === option.value ||
+								(value === option.value ||
 									privateValue?.value === option.value) &&
 									'bg-accent'
 							)}

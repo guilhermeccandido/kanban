@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type useReseizeProps = {
-  el?: HTMLElement | Window;
+  el?: HTMLElement | Window | null;
 };
 
 export interface ElementSize {
