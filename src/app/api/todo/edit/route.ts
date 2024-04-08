@@ -6,8 +6,6 @@ import TodoModel from "@/model/Todo";
 
 export async function PATCH(req) {
     try {
-        await new Promise((resolve) => setTimeout(resolve, 6000));
-        return new Response('Error', { status: 500 })
         const session = await getAuthSession();
 
         if (!session || !session?.user) return new Response('Unauthorized', { status: 401 });

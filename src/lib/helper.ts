@@ -18,4 +18,21 @@ const throttle = (fn: Function, delay: number) => {
     };
 }
 
-export { debounce, throttle };
+const deepCopy = <T>(value: T, hashmap = new WeakMap()): T => {
+  if (typeof value !== 'object' || value === null) return value;
+
+  if (hashmap.has(value)) return hashmap.get(value);
+
+  let clone = Array.isArray(value) ? [] as T : {} as T;
+  hashmap.set(value, clone);
+
+  for (let key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      clone[key] = deepCopy(value[key], hashmap);
+    }
+  }
+
+  return clone;
+}
+
+export { debounce, throttle, deepCopy };
