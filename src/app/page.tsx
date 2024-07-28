@@ -1,7 +1,7 @@
 import TodoColumnManager from "@/components/Home/TodoColumnManager";
 import SideNavOpener from "@/components/SideNavOpener";
 import dbConnect from "@/lib/db";
-import { getAuthSession } from "@/lib/nextauthOptions";
+import { getAuthSession } from "@/lib/nextAuthOptions";
 import TodoModel, { TodoType } from "@/model/Todo";
 import { HomeIcon } from "lucide-react";
 
@@ -15,7 +15,14 @@ const Home = async () => {
       Owner: user.id,
       isDeleted: false,
     })
-      .select({ title: 1, state: 1, _id: 1, dueDate: 1, plannedFinishDate: 1, description: 1 })
+      .select({
+        title: 1,
+        state: 1,
+        _id: 1,
+        dueDate: 1,
+        plannedFinishDate: 1,
+        description: 1,
+      })
       .sort({ createdAt: -1 })
       .exec();
     todos = JSON.parse(JSON.stringify(result));

@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/db";
 import debug from "@/lib/debug";
-import { getAuthSession } from "@/lib/nextauthOptions";
+import { getAuthSession } from "@/lib/nextAuthOptions";
 import { TodoCheckValidator } from "@/lib/validators/todo";
 import TodoModel from "@/model/Todo";
 

@@ -3,7 +3,7 @@ import TodoCalendar from "@/components/Calendar/TodoCalendar";
 import TaskCreator from "@/components/List/TaskCreator";
 import SideNavOpener from "@/components/SideNavOpener";
 import dbConnect from "@/lib/db";
-import { getAuthSession } from "@/lib/nextauthOptions";
+import { getAuthSession } from "@/lib/nextAuthOptions";
 import TodoModel, { TodoType } from "@/model/Todo";
 import { HomeIcon } from "lucide-react";
 

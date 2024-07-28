@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
-import { getAuthSession } from "@/lib/nextauthOptions";
+import { getAuthSession } from "@/lib/nextAuthOptions";
 import UserAvatar from "./UserAvatar";
 import UserAccountNav from "./UserAccountNav";
 
