@@ -85,7 +85,7 @@ const Tasks: FC<TasksProps> = ({ unFinishedTodos, finishedTodos }) => {
       {(unFinishedTodos.length > 0 || finishedTodos.length > 0) && (
         <TaskOrderManager />
       )}
-      <div className="max-h-[calc(100%-12rem)] flex flex-col gap-2 overflow-scroll">
+      <div className="max-h-[calc(100%-12rem)] flex flex-col gap-2 overflow-auto">
         {sortedTodos.map((todo) => (
           <Task todo={todo} key={todo._id.toString()} />
         ))}

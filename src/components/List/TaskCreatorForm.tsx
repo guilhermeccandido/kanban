@@ -87,7 +87,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 				submitCreateTodoTask(e);
 			})}
 		>
-			<Card className='max-h-[70%] overflow-scroll'>
+			<Card className='max-h-[70%]'>
 				<CardHeader>
 					<CardTitle>Create Todo Task</CardTitle>
 				</CardHeader>

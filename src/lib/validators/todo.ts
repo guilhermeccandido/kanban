@@ -34,6 +34,7 @@ export const TodoEditValidator = z
     state: z.enum(["todo", "in-progress", "review", "done"]),
     dueDate: z.number().int().positive().optional(),
     plannedFinishDate: z.number().int().positive().optional(),
+    order: z.number().int().min(0).optional(),
   })
   .refine(
     ({ dueDate, plannedFinishDate }) => {

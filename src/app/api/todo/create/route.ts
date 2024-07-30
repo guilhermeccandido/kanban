@@ -20,6 +20,8 @@ export async function POST(req: Request) {
 			plannedFinishDate,
 		} = TodoCreateValidator.parse(body);
 
+		await dbConnect();
+
 		const newTodo = {
 			title,
 			description,
@@ -30,8 +32,18 @@ export async function POST(req: Request) {
 			isDeleted: false,
 		};
 
-		await dbConnect();
-		await TodoModel.create(newTodo);
+    const todoWithMaxOrderInSameState = await TodoModel.find({
+      Owner: session.user.id,
+      state,
+      isDeleted: false,
+    }).sort({ order: -1 }).limit(1)[0]
+    const order = (todoWithMaxOrderInSameState?.order ?? 0) + 1
+
+		await TodoModel.create({
+      ...newTodo,
+      order,
+    });
+
 		return new Response('OK', { status: 200 });
 	} catch (error) {
 		debug('src/app/api/todo/create/route.ts', error);

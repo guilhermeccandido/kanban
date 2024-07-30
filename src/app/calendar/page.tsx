@@ -24,8 +24,8 @@ const Calendar = async () => {
   }
 
   return (
-    <div className="h-[95%] flex flex-col">
-      <div className="flex items-center pb-8 justify-between flex-none">
+    <div className="h-[92.5%] sm:h-[95%] flex flex-col">
+      <div className="flex items-center pb-4 sm:pb-8 justify-between flex-none">
         <div className="flex">
           <SideNavOpener pageIcon={<HomeIcon />} />
           <div className="pl-3 text-base">Calendar</div>

@@ -29,6 +29,9 @@ class Todo {
 
 	@prop({ type: () => Boolean, default: false })
 	public isDeleted!: boolean;
+
+  @prop({ type: () => Number, required: true})
+  public order!: number;
 }
 
 export type TodoType = Todo & { _id: Types.ObjectId };

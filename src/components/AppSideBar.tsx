@@ -5,7 +5,7 @@ import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
 import { Calendar, Dumbbell, List, Menu } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 type NavContent = {
@@ -64,9 +64,7 @@ const AppSideBar = () => {
     };
   }, [handleCloseDrawer]);
 
-  if (!isOpen) return null;
-
-  const getContent = () => {
+  const content = useMemo(() => {
     return (
       <>
         {NAV_CONTENT.map((content, index) => (
@@ -84,31 +82,33 @@ const AppSideBar = () => {
         ))}
       </>
     );
-  };
+  }, [handleCloseDrawer]);
+
+  if (!isOpen) return null;
 
   return usingDrawer ? (
     <>
-      <div className="absolute w-full h-full z-10 bg-zinc-500/30 backdrop-blur-[1px]" />
+      <div className="absolute top-0 left-0 w-full h-full z-10 bg-zinc-500/30 backdrop-blur-[1px]" />
       <div
-        className="absolute container pt-12 bg-white w-72 h-full mx-0 opacity-100 z-20"
+        className="absolute top-0 left-0 container bg-white w-72 h-full mx-0 opacity-100 z-20"
         ref={drawerRef}
       >
-        <div className="pb-5">
+        <div className="pt-12 pb-5">
           <div className="w-6 h-6 cursor-pointer">
             <Menu onClick={handleCloseDrawer} />
           </div>
         </div>
-        {getContent()}
+        {content}
       </div>
     </>
   ) : (
-    <div className="container pt-12 bg-white w-72 h-full mx-0 z-20">
+    <div className="container pt-12 bg-white w-72 h-full mx-0 z-20 min-w-[260px] max-w-[260px]">
       <div className="pb-5">
         <div className="w-6 h-6 cursor-pointer">
           <Menu onClick={handleCloseDrawer} />
         </div>
       </div>
-      {getContent()}
+      {content}
     </div>
   );
 };

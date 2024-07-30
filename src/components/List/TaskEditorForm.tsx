@@ -74,6 +74,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 				description,
 				dueDate,
 				plannedFinishDate,
+        order: task.order,
 			};
 			const result = await axios.patch('/api/todo/edit', payload);
 			return result;
@@ -112,7 +113,7 @@ const TaskCreatorForm: FC<TaskCreatorFormProps> = ({
 				submitCreateTodoTask(e);
 			})}
 		>
-			<Card className='max-h-[70%] overflow-scroll'>
+			<Card className='max-h-[70%]'>
 				<CardHeader>
 					<CardTitle>Edit Todo Task</CardTitle>
 				</CardHeader>
