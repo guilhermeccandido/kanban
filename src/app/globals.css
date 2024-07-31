@@ -69,10 +69,14 @@
 @layer base {
   * {
     @apply border-border;
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   body {
     @apply bg-background text-foreground;
     @apply text-zinc-600;
   }
 }
-
