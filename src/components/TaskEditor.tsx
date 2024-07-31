@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import CustomizedDialog from "../CustomizedDialog";
+import CustomizedDialog from "./CustomizedDialog";
 import TaskEditorForm from "./TaskEditorForm";
 import { TodoType } from "@/model/Todo";
 import { useDispatch, useSelector } from "react-redux";

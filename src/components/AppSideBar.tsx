@@ -25,11 +25,6 @@ const NAV_CONTENT: NavContent[] = [
     icon: <Calendar />,
     link: "/calendar",
   },
-  {
-    title: "List",
-    icon: <List />,
-    link: "list",
-  },
 ];
 
 const AppSideBar = () => {

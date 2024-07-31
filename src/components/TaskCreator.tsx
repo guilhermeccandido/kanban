@@ -1,6 +1,6 @@
 "use client";
 
-import CustomizedDialog from "../CustomizedDialog";
+import CustomizedDialog from "./CustomizedDialog";
 import TaskCreatorForm from "./TaskCreatorForm";
 import { useDispatch, useSelector } from "react-redux";
 import store, { ReduxState } from "@/redux/store";

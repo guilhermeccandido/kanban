@@ -4,14 +4,14 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from '../ui/card';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
+} from './ui/card';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 import { TodoCreateRequest, TodoCreateValidator } from '@/lib/validators/todo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Label } from '../ui/label';
-import CustomizedSelect, { Option } from '../CustomizedSelect';
+import { Label } from './ui/label';
+import CustomizedSelect, { Option } from './CustomizedSelect';
 import { useMutation } from 'react-query';
 import { FC, memo } from 'react';
 import axios, { AxiosError } from 'axios';
@@ -23,12 +23,12 @@ import {
 } from '@radix-ui/react-popover';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Calendar } from '../ui/calendar';
+import { Calendar } from './ui/calendar';
 import { TASK_STATE_OPTIONS } from '@/lib/const';
 import dayjs from 'dayjs';
 import { TaskCreatorDefaultValues } from '@/redux/actions/todoAction';
-import { Textarea } from '../ui/textarea';
-import { useToast } from '../ui/use-toast';
+import { Textarea } from './ui/textarea';
+import { useToast } from './ui/use-toast';
 
 type TaskCreatorFormProps = {
 	handleOnSuccess: () => void;

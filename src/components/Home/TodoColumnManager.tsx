@@ -16,7 +16,7 @@ const TodoColumn = dynamic(() => import("./TodoColumn"), {
 });
 
 type TodoColumnManagerProp = {
-  todos?: Record<TodoType["state"], TodoType[]>;
+  todos: Record<TodoType["state"], TodoType[]>;
 };
 
 const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
@@ -42,11 +42,12 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
     if (!over || !from) return;
 
     const payload = {
-      id: item,
       state: over,
+      id: item,
       order,
     };
 
+    // @ts-ignore
     const result = await handleUpdateState(payload);
   };
 
