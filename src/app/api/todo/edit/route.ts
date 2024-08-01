@@ -23,7 +23,7 @@ export async function PATCH(req) {
     });
     if (!record) return new Response("Record Not Found", { status: 404 });
 
-    if (typeof order === 'undefined' || record.order === order) {
+    if (typeof order === "undefined" || record.order === order) {
       await TodoModel.updateOne(
         { _id: id, Owner: session!.user!.id },
         {
