@@ -31,6 +31,7 @@ const Home = async () => {
         dueDate: 1,
         plannedFinishDate: 1,
         description: 1,
+        order: 1,
       })
       .sort({ order: 1 })
       .exec();

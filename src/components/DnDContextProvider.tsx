@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -35,22 +36,34 @@ type DndContext = {
   isDragging: boolean;
   isOver: DnDId | null;
   order: number | null;
-  handleDragStart: (e: DndMouseEvent, id: DnDId) => void;
+  handleDragStart: (
+    e: DndMouseEvent,
+    id: DnDId,
+    draggingNode: HTMLElement,
+  ) => void;
   handleDragging: (e: DndMouseEvent) => void;
   handleDragEnd: (e: DndMouseEvent) => void;
   addDroppable: (id: DnDId, node: HTMLElement) => void;
   removeDroppable: (id: DnDId) => void;
+  getDraggingNode: () => HTMLElement | null;
+  constants: Record<string | number, string>;
 };
 
 const initialState = {
   isDragging: false,
   isOver: null,
   order: 0,
-  handleDragStart: (e: DndMouseEvent, id: DnDId) => {},
+  handleDragStart: (
+    e: DndMouseEvent,
+    id: DnDId,
+    draggingNode: HTMLElement,
+  ) => {},
   handleDragging: (e: DndMouseEvent) => {},
   handleDragEnd: (e: DndMouseEvent) => {},
   addDroppable: (id: DnDId, node: HTMLElement) => {},
   removeDroppable: (id: DnDId) => {},
+  getDraggingNode: () => null,
+  constants: {},
 };
 
 export const DnDContext = createContext<DndContext>(initialState);
@@ -66,8 +79,16 @@ const DndContextProvider: FC<DndContextProps> = ({
   const start = useRef<DnDId | null>(null);
   const droppableRef = useRef<DroppableMap | null>(null);
   const draggingNodeId = useRef<DnDId | null>(null);
+  const draggingNode = useRef<HTMLElement | null>(null);
   const prevMouseMoveEvent = useRef<DndMouseEvent | null>(null);
   const forceUpdate = useForceUpdate();
+  const constants = useMemo(
+    () => ({
+      DRAGGING_ITEM_ID: "dnd-dragging-id",
+      HOVER_ITEM_ID: "dnd-hover-id",
+    }),
+    [],
+  );
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -87,6 +108,12 @@ const DndContextProvider: FC<DndContextProps> = ({
     isOver.current = null;
     start.current = null;
     draggingNodeId.current = null;
+  }, []);
+
+  const registerDragging = useCallback((id: DnDId, node: HTMLElement) => {
+    if (!node) return;
+    draggingNode.current = node;
+    draggingNodeId.current = id;
   }, []);
 
   const addDroppable = useCallback((id: DnDId, node: HTMLElement) => {
@@ -122,22 +149,22 @@ const DndContextProvider: FC<DndContextProps> = ({
     (e: DndMouseEvent, isOver: string | null) => {
       if (!isOver || !droppableRef.current) return null;
       const { node } = droppableRef.current[isOver];
-      if (!node.children || node.children.length === 0) return 0;
+      if (!node.children || node.children.length === 0) return 1;
 
       let closest = Infinity;
       let closestIndex: null | number = null;
       const remainingChildren = Array.from(node.children).filter(
         (child) =>
-          (child as HTMLElement).style.display !== "none" &&
-          !child.id.match(/^hover-/),
+          child.id !== constants.DRAGGING_ITEM_ID &&
+          child.id !== constants.HOVER_ITEM_ID,
       );
-      if (remainingChildren.length === 0) return 0;
+      if (remainingChildren.length === 0) return 1;
       remainingChildren.forEach((child, index) => {
         const rect = (child as HTMLElement).getBoundingClientRect();
         const top = rect.top;
         if (Math.abs(top - e.clientY) < closest) {
           closest = Math.abs(top - e.clientY);
-          closestIndex = index;
+          closestIndex = index + 1;
         }
       });
 
@@ -146,7 +173,7 @@ const DndContextProvider: FC<DndContextProps> = ({
       ] as HTMLElement;
       const lastRect = lastChild.getBoundingClientRect();
       if (Math.abs(lastRect.bottom - e.clientY) < closest) {
-        closestIndex = remainingChildren.length;
+        closestIndex = remainingChildren.length + 1;
       }
       return closestIndex;
     },
@@ -154,12 +181,12 @@ const DndContextProvider: FC<DndContextProps> = ({
   );
 
   const handleDragStart = useCallback(
-    (e: DndMouseEvent, id: DnDId) => {
+    (e: DndMouseEvent, id: DnDId, draggingNode: HTMLElement) => {
       setIsDragging(true);
       start.current = checkDroppableCollision(e);
-      draggingNodeId.current = id;
+      registerDragging(id, draggingNode);
     },
-    [checkDroppableCollision],
+    [checkDroppableCollision, registerDragging],
   );
 
   const handleDragging = useCallback(
@@ -167,13 +194,16 @@ const DndContextProvider: FC<DndContextProps> = ({
       prevMouseMoveEvent.current = e;
       const _isOver = checkDroppableCollision(e);
       const _order = calculateOrder(e, _isOver);
-      if (_isOver !== isOver.current || _order !== order.current) {
+      if (
+        _isOver !== isOver.current ||
+        (_order !== order.current && !!_order)
+      ) {
         isOver.current = _isOver;
         order.current = _order;
         forceUpdate();
       }
     },
-    [checkDroppableCollision],
+    [checkDroppableCollision, calculateOrder],
   );
 
   const handleDragEnd = useCallback(
@@ -193,6 +223,10 @@ const DndContextProvider: FC<DndContextProps> = ({
     [onDragEnd, reset],
   );
 
+  const getDraggingNode = useCallback(() => {
+    return draggingNode.current;
+  }, []);
+
   const value: DndContext = {
     isDragging,
     isOver: isOver.current,
@@ -202,6 +236,8 @@ const DndContextProvider: FC<DndContextProps> = ({
     handleDragEnd,
     addDroppable,
     removeDroppable,
+    getDraggingNode,
+    constants,
   };
 
   return <DnDContext.Provider value={value}>{children}</DnDContext.Provider>;

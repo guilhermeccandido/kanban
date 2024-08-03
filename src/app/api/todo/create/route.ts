@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       .exec();
     const order =
       todoWithMaxOrderInSameState.length === 0
-        ? 0
+        ? 1
         : todoWithMaxOrderInSameState[0].order + 1;
 
     await TodoModel.create({

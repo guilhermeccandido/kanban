@@ -11,41 +11,36 @@ type UseDroppableReturn = {
   order: number | null;
 };
 
+const INITIAL_HEIGHT = 0;
+
 const useDroppable = ({ id }: UseDroppableArgs): UseDroppableReturn => {
   const setup = useRef(false);
   const droppableRef = useRef<HTMLElement | null>(null);
-  const { addDroppable, isOver: OverObj, order } = useContext(DnDContext);
+  const draggingNodeHeight = useRef(INITIAL_HEIGHT);
+  const draggingNodeMargin = useRef(INITIAL_HEIGHT);
+  const hoveringElement = useRef<HTMLElement | null>(null);
+  const {
+    addDroppable,
+    isOver: OverObj,
+    order,
+    getDraggingNode,
+    constants: { HOVER_ITEM_ID, DRAGGING_ITEM_ID },
+  } = useContext(DnDContext);
   const isOver = useMemo(() => !!OverObj && OverObj == id, [id, OverObj]);
 
-  const hoverElementForChildrenElementTop = useMemo(() => {
-    const element = document.createElement("div");
-    element.id = `hover-${id}`;
-    element.style.height = "2px";
-    element.style.width = "100%";
-    element.style.backgroundColor = "hsl(var(--primary))";
-    element.style.position = "absolute";
-    element.style.top = "-1px";
-    return element;
-  }, [id]);
+  const setDraggingNodeHeight = useCallback(() => {
+    const draggingNode = getDraggingNode();
+    if (!draggingNode) return INITIAL_HEIGHT;
 
-  const hoverElementForChildrenElementBottom = useMemo(() => {
-    const element = document.createElement("div");
-    element.id = `hover-${id}`;
-    element.style.height = "2px";
-    element.style.width = "100%";
-    element.style.backgroundColor = "hsl(var(--primary))";
-    element.style.position = "absolute";
-    element.style.bottom = "-1px";
-    return element;
-  }, [id]);
+    const originalDisplay = draggingNode?.style.display;
+    draggingNode.style.display = "block";
+    draggingNodeHeight.current = draggingNode.offsetHeight;
+    draggingNode.style.display = originalDisplay;
 
-  const hoverElementForParentElement = useMemo(() => {
-    const element = document.createElement("div");
-    element.id = `hover-${id}`;
-    element.style.height = "2px"
-    element.style.backgroundColor = "hsl(var(--primary))";
-    return element;
-  }, [id]);
+    draggingNodeMargin.current =
+      parseFloat(window.getComputedStyle(draggingNode).marginTop) +
+      parseFloat(window.getComputedStyle(draggingNode).marginBottom);
+  }, [getDraggingNode]);
 
   const setNodeRef = useCallback(
     (node: HTMLElement | null) => {
@@ -59,51 +54,82 @@ const useDroppable = ({ id }: UseDroppableArgs): UseDroppableReturn => {
     [addDroppable, id],
   );
 
-  const clearHoverElement = useCallback(() => {
-    const element = document.getElementById(`hover-${id}`);
-    if (element) {
-      element.remove();
-    }
-  }, [id]);
+  const clearHoverElement = useCallback(
+    (parent: HTMLElement) => {
+      const element = parent.querySelector(`#${HOVER_ITEM_ID}`);
+      if (element) {
+        element.remove();
+      }
+      draggingNodeHeight.current = INITIAL_HEIGHT;
+      draggingNodeMargin.current = INITIAL_HEIGHT;
+      hoveringElement.current = null;
+    },
+    [HOVER_ITEM_ID],
+  );
+
+  const clearHoverStyling = useCallback((children: HTMLElement[]) => {
+    children.forEach((child) => {
+      child.style.transform = `translateY(0px)`;
+    });
+  }, []);
 
   const addHoverElementToDom = useCallback(
-    (parent: Element, type: "top" | "bottom" | "parent") => {
-      clearHoverElement();
-      if (type === "top") {
-        parent.prepend(hoverElementForChildrenElementTop);
-      } else if (type === "bottom") {
-        parent.append(hoverElementForChildrenElementBottom);
-      } else {
-        parent.append(hoverElementForParentElement);
-      }
+    (parent: HTMLElement) => {
+      if (hoveringElement.current || !getDraggingNode) return;
+      const referenceNode = getDraggingNode();
+      if (!referenceNode) return;
+
+      const element = document.createElement("div");
+      element.id = HOVER_ITEM_ID;
+      element.style.height = `${draggingNodeHeight.current}px`;
+      element.style.borderRadius = "4px";
+      element.style.backgroundColor = "#f1f1f1";
+      parent.appendChild(element);
+      hoveringElement.current = element;
     },
-    [
-      clearHoverElement,
-      hoverElementForParentElement,
-      hoverElementForChildrenElementTop,
-      hoverElementForChildrenElementBottom,
-    ],
+    [getDraggingNode, draggingNodeHeight, HOVER_ITEM_ID],
   );
 
   useEffect(() => {
+    if (!droppableRef.current) return;
+    const children = Array.from(droppableRef.current?.children).filter(
+      (child) => child.id !== DRAGGING_ITEM_ID && child.id !== HOVER_ITEM_ID,
+    ) as HTMLElement[];
+    clearHoverStyling(children);
+
     if (order === null || OverObj !== id) {
-      clearHoverElement();
+      clearHoverElement(droppableRef.current);
       return;
     }
-    if (OverObj !== id || !droppableRef.current) return;
-    const childrens = Array.from(droppableRef.current?.children).filter(
-      (child) =>
-        (child as HTMLElement).style.display !== "none" &&
-        (child as HTMLElement).id !== `hover-${id}`,
-    );
-    if (childrens.length === 0) {
-      addHoverElementToDom(droppableRef.current, "parent");
-    } else if (order >= childrens.length) {
-      addHoverElementToDom(childrens[childrens.length - 1], "bottom");
-    } else {
-      addHoverElementToDom(childrens[order], "top");
-    }
-  }, [order, OverObj, id, addHoverElementToDom, clearHoverElement]);
+
+    if (
+      draggingNodeHeight.current === INITIAL_HEIGHT ||
+      draggingNodeMargin.current === INITIAL_HEIGHT
+    )
+      setDraggingNodeHeight();
+
+    addHoverElementToDom(droppableRef.current);
+    const movement = draggingNodeHeight.current + draggingNodeMargin.current;
+    children.forEach((child, index) => {
+      if (index + 1 >= order) {
+        child.style.transform = `translateY(${movement}px)`;
+      }
+    });
+    const numberOfElementAfter = children.length - order + 1;
+    hoveringElement.current!.style.transform = `translateY(-${movement * numberOfElementAfter}px)`;
+  }, [
+    order,
+    OverObj,
+    id,
+    clearHoverElement,
+    clearHoverStyling,
+    addHoverElementToDom,
+    getDraggingNode,
+    setDraggingNodeHeight,
+    DRAGGING_ITEM_ID,
+    HOVER_ITEM_ID,
+    draggingNodeHeight,
+  ]);
 
   return { setNodeRef, isOver, order };
 };
