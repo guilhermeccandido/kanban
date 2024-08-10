@@ -18,7 +18,6 @@ type TodoColumnProp = {
 
 const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
   const { setNodeRef } = useDroppable({ id: state });
-  console.log(todos)
 
   return (
     <div className="bg-white h-full py-2 rounded-md flex flex-col shadow-lg max-w-[288px] min-w-[288px]">

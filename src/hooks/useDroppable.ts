@@ -110,13 +110,16 @@ const useDroppable = ({ id }: UseDroppableArgs): UseDroppableReturn => {
 
     addHoverElementToDom(droppableRef.current);
     const movement = draggingNodeHeight.current + draggingNodeMargin.current;
+    let hoveringElementTransform = 0;
     children.forEach((child, index) => {
       if (index + 1 >= order) {
         child.style.transform = `translateY(${movement}px)`;
+        hoveringElementTransform +=
+          parseFloat(window.getComputedStyle(child).height) +
+          parseFloat(window.getComputedStyle(child).marginBottom);
       }
     });
-    const numberOfElementAfter = children.length - order + 1;
-    hoveringElement.current!.style.transform = `translateY(-${movement * numberOfElementAfter}px)`;
+    hoveringElement.current!.style.transform = `translateY(-${hoveringElementTransform}px)`;
   }, [
     order,
     OverObj,
