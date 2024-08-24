@@ -229,6 +229,18 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
                   )}
                 />
               </div>
+              <div className="relative flex gap-1 pb-4">
+                <Button isLoading={isLoading}>Edit Task</Button>
+                {enableDelete && (
+                  <Button
+                    variant="outline"
+                    onClick={() => deleteFunc({ id: task.id })}
+                    isLoading={deleteTaskIsLoading}
+                  >
+                    Delete Task
+                  </Button>
+                )}
+              </div>
             </div>
             {md && (
               <div className="w-64 flex flex-col border rounded-xl p-3 h-min">
@@ -237,18 +249,18 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
             )}
           </div>
         </CardContent>
-        <CardFooter className="gap-2">
-          <Button isLoading={isLoading}>Edit Task</Button>
-          {enableDelete && (
-            <Button
-              variant="outline"
-              onClick={() => deleteFunc({ id: task.id })}
-              isLoading={deleteTaskIsLoading}
-            >
-              Delete Task
-            </Button>
-          )}
-        </CardFooter>
+        {/* <CardFooter className="gap-2"> */}
+        {/*   <Button isLoading={isLoading}>Edit Task</Button> */}
+        {/*   {enableDelete && ( */}
+        {/*     <Button */}
+        {/*       variant="outline" */}
+        {/*       onClick={() => deleteFunc({ id: task.id })} */}
+        {/*       isLoading={deleteTaskIsLoading} */}
+        {/*     > */}
+        {/*       Delete Task */}
+        {/*     </Button> */}
+        {/*   )} */}
+        {/* </CardFooter> */}
       </Card>
     </form>
   );

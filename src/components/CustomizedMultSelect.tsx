@@ -56,7 +56,6 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
         setPrivateOptionsBackup(data);
       })
       .catch((error) => {
-        console.error(error);
         setPrivateOptionsBackup([]);
       });
   }, [lazyFetch, setPrivateOptionsBackup]);
@@ -73,10 +72,12 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   const clearSelected = () => {
     setPrivateValue([]);
     setIsNewLabel(false);
+    setSearchValue("");
     if (onChange) onChange([]);
   };
 
   const onSelect = (option: string) => {
+    setSearchValue("");
     const newValue = privateValue.includes(option)
       ? privateValue.filter((value) => value !== option)
       : [...privateValue, option];
@@ -158,24 +159,24 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   };
 
   return (
-    <div className="relative text-sm text-left">
+    <div className="relative text-sm text-left max-w-full">
       <div
-        className="relative w-full bg-background border rounded-lg"
+        className="relative bg-background border rounded-lg"
         ref={selectorRef}
       >
         <div
           onClick={handleOpen}
-          className="py-2 px-4 flex justify-between items-center cursor-pointer"
+          className="py-2 px-4 flex justify-between items-center cursor-pointer max-w-full"
         >
-          <div className="flex flex-wrap justify-start">
+          <div className="flex flex-wrap justify-start max-w-full">
             {privateValue.length > 0 ? (
               <>
                 {privateValue.map((value) => (
                   <div
                     key={value}
-                    className="inline-flex bg-gray-200 max-w-[180px] m-[1px] items-center"
+                    className="inline-flex bg-slate-200 max-w-[180px] m-[1px] items-center rounded-sm"
                   >
-                    <div className="overflow-hidden text-ellipsis whitespace-nowrap px-1">
+                    <div className="overflow-hidden text-ellipsis whitespace-nowrap px-2">
                       {value}
                     </div>
                     {open && (
@@ -195,12 +196,12 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
               )
             )}
             {open && (
-              <div className="inline-flex max-w-full ml-1">
+              <div className="inline-flex grow min-w-[20px] max-w-full ml-1 overflow-hidden">
                 <input
                   ref={searchRef}
                   onChange={onSearch}
                   value={searchValue}
-                  className="outline-none border-none bg-transparent w-full"
+                  className="w-full min-w-0 outline-none border-none bg-transparent"
                   onClick={(e) => e.stopPropagation()}
                   onKeyDown={handleInputOnKeyDown}
                 />

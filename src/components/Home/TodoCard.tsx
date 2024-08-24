@@ -40,7 +40,7 @@ const TodoCard: FC<TodoProps> = ({ todo }) => {
         {todo.label && (
           <div className="flex gap-2 flex-wrap">
             {todo.label.map((label) => (
-              <div key={label} className="px-2 rounded-sm bg-gray-200">
+              <div key={label} className="px-2 rounded-sm bg-gray-200 leading-5">
                 {label}
               </div>
             ))}
