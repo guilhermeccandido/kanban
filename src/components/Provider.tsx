@@ -1,11 +1,10 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import store from "../redux/store";
-import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "react-query";
-import TaskCreator from "./TaskCreator";
-import TaskEditor from "./TaskEditor";
+import { Provider } from "react-redux";
+import store from "../redux/store";
+import TaskEditFormDialog from "./TaskEditFormDialog";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -18,8 +17,7 @@ export function Providers({ children }: ProvidersProps) {
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <SessionProvider>{children}</SessionProvider>
-        <TaskCreator />
-        <TaskEditor />
+        <TaskEditFormDialog />
       </Provider>
     </QueryClientProvider>
   );

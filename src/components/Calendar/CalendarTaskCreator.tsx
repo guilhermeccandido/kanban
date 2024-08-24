@@ -1,14 +1,14 @@
 "use client";
 
-import { openTodoCreator } from "@/redux/actions/todoAction";
 import { Plus } from "lucide-react";
 import { useDispatch } from "react-redux";
+import { openTodoEditor } from "@/redux/actions/todoAction";
 
 const CalendarTaskCreator = () => {
   const dispatch = useDispatch();
 
   const handleOpenDialog = () => {
-    dispatch(openTodoCreator("/calendar"));
+    dispatch(openTodoEditor({}, "/calendar", "create"));
   };
 
   return (

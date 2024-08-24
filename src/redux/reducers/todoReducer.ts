@@ -1,74 +1,46 @@
-import { TodoType } from "@/model/Todo";
+import { OptionalTodo } from "@/types/todo";
 import {
   TaskCreatorDefaultValues,
+  TaskEditType,
   TodoAction,
   todoActionType,
 } from "../actions/todoAction";
-import { AnyAction } from "redux";
 
 export interface TodoState {
-  sortedBy: "priority" | "dueDate" | "plannedFinishDate";
-  sortedAsc: boolean;
   isTodoEditorOpen: boolean;
-  targetTodo: TodoType | null;
+  targetTodo: OptionalTodo | TaskCreatorDefaultValues;
   taskEditorCaller: string;
-  isTodoCreatorOpen: boolean;
-  taskCreatorCaller: string;
-  taskCreatorDefaultValues: TaskCreatorDefaultValues;
+  taskEditType: TaskEditType | null;
 }
 
 const initialState: TodoState = {
-  sortedBy: "priority",
-  sortedAsc: true,
   isTodoEditorOpen: false,
-  targetTodo: null,
+  targetTodo: {},
   taskEditorCaller: "",
-  isTodoCreatorOpen: false,
-  taskCreatorCaller: "",
-  taskCreatorDefaultValues: {},
+  taskEditType: null,
 };
 
-const reducer = (
-  state = initialState,
-  action: TodoAction | AnyAction,
-): TodoState => {
+const reducer = (state = initialState, action: TodoAction): TodoState => {
   switch (action.type) {
-    case todoActionType.SORT_TODO_BY:
-      return {
-        ...state,
-        sortedBy: action.payload,
-        sortedAsc: true,
-      };
-    case todoActionType.SORT_TODO_ASC:
-      return {
-        ...state,
-        sortedAsc: action.payload,
-      };
     case todoActionType.OPEN_TODO_EDITOR:
       return {
         ...state,
         isTodoEditorOpen: true,
-        targetTodo: action.payload.todo,
+        targetTodo:
+          action.payload.type === "create"
+            ? {
+                ...action.payload.todo,
+              }
+            : action.payload.todo,
         taskEditorCaller: action.payload.taskEditorCaller,
+        taskEditType: action.payload.type,
       };
     case todoActionType.CLOSE_TODO_EDITOR:
       return {
         ...state,
         isTodoEditorOpen: false,
         taskEditorCaller: "",
-      };
-    case todoActionType.OPEN_TODO_CREATOR:
-      return {
-        ...state,
-        isTodoCreatorOpen: true,
-        taskCreatorCaller: action.payload.taskCreatorCaller,
-        taskCreatorDefaultValues: action.payload.taskCreatorDefaultValues,
-      };
-    case todoActionType.CLOSE_TODO_CREATOR:
-      return {
-        ...state,
-        isTodoCreatorOpen: false,
-        taskCreatorCaller: "",
+        taskEditType: null,
       };
     default:
       return state;

@@ -1,37 +1,29 @@
 "use client";
 
 import useDraggable from "@/hooks/useDraggable";
-import { throttle } from "@/lib/helper";
-import { getEarilerDate } from "@/lib/utils";
-import { TodoType } from "@/model/Todo";
 import { openTodoEditor } from "@/redux/actions/todoAction";
-import clsx from "clsx";
+import { OptionalTodo } from "@/types/todo";
 import dayjs from "dayjs";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 type TodoProps = {
-  todo: TodoType;
+  todo: OptionalTodo;
 };
 
 const TodoCard: FC<TodoProps> = ({ todo }) => {
   const dispatch = useDispatch();
 
-  const isDescriptionHvLineBreak = useMemo(
-    () => todo.description?.includes("\n"),
-    [todo.description],
-  );
-
   const handleClick = useCallback(
     (e: MouseEvent) => {
       e.stopPropagation();
-      dispatch(openTodoEditor(todo, "/"));
+      dispatch(openTodoEditor(todo, "/", "edit"));
     },
     [dispatch, todo],
   );
 
   const { setNodeRef, attributes } = useDraggable({
-    id: todo._id.toString(),
+    id: todo.id,
     handleClick,
   });
 
@@ -42,22 +34,20 @@ const TodoCard: FC<TodoProps> = ({ todo }) => {
       {...attributes}
     >
       <div className="px-2 py-1 ">
-        <div className="font-bold overflow-hidden whitespace-nowrap text-ellipsis">
+        <div className="pb-2 font-bold overflow-hidden whitespace-nowrap text-ellipsis">
           {todo.title}
         </div>
-        <div
-          className={clsx(
-            "text-sm whitespace-pre-line overflow-hidden text-ellipsis",
-            isDescriptionHvLineBreak && "line-clamp-3",
-          )}
-        >
-          {todo?.description}
-        </div>
+        {todo.label && (
+          <div className="flex gap-2 flex-wrap">
+            {todo.label.map((label) => (
+              <div key={label} className="px-2 rounded-sm bg-gray-200">
+                {label}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="text-xs text-right">
-          {(todo.dueDate || todo.plannedFinishDate) &&
-            dayjs(getEarilerDate(todo.dueDate, todo.plannedFinishDate)).format(
-              "YYYY-MM-DD",
-            )}
+          {todo.deadline && dayjs(todo.deadline).format("YYYY-MM-DD")}
         </div>
       </div>
     </div>

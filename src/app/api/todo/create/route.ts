@@ -1,10 +1,10 @@
-import dbConnect from "@/lib/db";
-import debug from "@/lib/debug";
 import { getAuthSession } from "@/lib/nextAuthOptions";
+import prisma from "@/lib/prismadb";
 import { TodoCreateValidator } from "@/lib/validators/todo";
-import TodoModel from "@/model/Todo";
+import { getLogger } from "@/logger";
 
-export async function POST(req: Request) {
+export async function POST(req) {
+  const logger = getLogger("info");
   try {
     const session = await getAuthSession();
 
@@ -16,43 +16,45 @@ export async function POST(req: Request) {
       title,
       description = "",
       state,
-      dueDate,
-      plannedFinishDate,
+      deadline,
+      dangerPeriod = 0,
+      label,
     } = TodoCreateValidator.parse(body);
 
-    await dbConnect();
+    const todoWithMaxOrderInSameState = await prisma.todo.findFirst({
+      where: {
+        ownerId: session.user.id,
+        state,
+        isDeleted: false,
+      },
+      orderBy: {
+        order: "desc",
+      },
+    });
+    const order = !todoWithMaxOrderInSameState
+      ? 1
+      : todoWithMaxOrderInSameState.order + 1;
 
-    const newTodo = {
-      title,
-      description,
-      state,
-      dueDate,
-      plannedFinishDate,
-      Owner: session.user.id,
-      isDeleted: false,
-    };
-
-    const todoWithMaxOrderInSameState = await TodoModel.find({
-      Owner: session.user.id,
-      state,
-      isDeleted: false,
-    })
-      .sort({ order: -1 })
-      .limit(1)
-      .exec();
-    const order =
-      todoWithMaxOrderInSameState.length === 0
-        ? 1
-        : todoWithMaxOrderInSameState[0].order + 1;
-
-    await TodoModel.create({
-      ...newTodo,
-      order,
+    const result = await prisma.todo.create({
+      data: {
+        title,
+        description,
+        state,
+        label,
+        deadline,
+        dangerPeriod,
+        order,
+        owner: {
+          connect: {
+            id: session.user.id,
+          },
+        },
+      },
     });
 
     return new Response("OK", { status: 200 });
   } catch (error) {
-    debug("src/app/api/todo/create/route.ts", error);
+    logger.error(error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

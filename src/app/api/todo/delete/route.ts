@@ -1,10 +1,11 @@
-import dbConnect from "@/lib/db";
-import debug from "@/lib/debug";
 import { getAuthSession } from "@/lib/nextAuthOptions";
 import { TodoDeleteValidator } from "@/lib/validators/todo";
-import TodoModel from "@/model/Todo";
+import prisma from "@/lib/prismadb";
+import { getLogger } from "@/logger";
+import { NextRequest } from "next/server";
 
-export async function DELETE(req) {
+export async function DELETE(req: NextRequest) {
+  const logger = getLogger("info");
   try {
     const session = await getAuthSession();
 
@@ -14,34 +15,38 @@ export async function DELETE(req) {
 
     const { id } = TodoDeleteValidator.parse(body);
 
-    await dbConnect();
-    const [record] = await TodoModel.find({
-      _id: id,
-      Owner: session.user.id,
-      isDeleted: false,
+    const [record] = await prisma.todo.findMany({
+      where: {
+        id,
+        ownerId: session.user.id,
+        isDeleted: false,
+      },
     });
     if (!record) return new Response("Record Not Found", { status: 404 });
 
-    await TodoModel.updateOne(
-      { _id: id, Owner: session.user.id },
-      {
+    await prisma.todo.update({
+      where: { id },
+      data: {
         isDeleted: true,
       },
-    );
+    });
 
-    // move all order after the deleted order to -1
-    await TodoModel.updateMany(
-      {
-        Owner: session.user.id,
+    await prisma.todo.updateMany({
+      where: {
+        ownerId: session.user.id,
         state: record.state,
-        order: { $gt: record.order },
+        order: { gt: record.order },
       },
-      { $inc: { order: -1 } },
-    );
+      data: {
+        order: {
+          decrement: 1,
+        },
+      },
+    });
 
     return new Response("OK", { status: 200 });
   } catch (error) {
-    debug("src/app/api/todo/delete/route.ts", error);
+    logger.error(error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

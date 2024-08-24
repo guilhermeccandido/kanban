@@ -1,25 +1,25 @@
-import { TodoType } from "@/model/Todo";
+import { Todo } from "@prisma/client";
 
 export const TASK_STATE_OPTIONS: Readonly<
   {
-    value: TodoType["state"];
+    value: Todo["state"];
     title: string;
   }[]
 > = Object.freeze([
   {
-    value: "todo",
+    value: "TODO",
     title: "Todo",
   },
   {
-    value: "in-progress",
+    value: "IN_PROGRESS",
     title: "In Progress",
   },
   {
-    value: "review",
+    value: "REVIEW",
     title: "Review",
   },
   {
-    value: "done",
+    value: "DONE",
     title: "Done",
   },
 ]);

@@ -1,7 +1,6 @@
 "use client";
 
 import useResize from "@/hooks/useResize";
-import { TodoType } from "@/model/Todo";
 import dayjs from "dayjs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
@@ -13,15 +12,16 @@ import {
   useState,
 } from "react";
 import DayCell from "./DayCell";
+import { Todo } from "@prisma/client";
 
 type TodoCalendarProps = {
-  todos: TodoType[];
+  todos: Todo[];
 };
 
 export type TodoOfDay = {
-  deadline: TodoType[];
-  plannedDeadline: TodoType[];
-  finished: TodoType[];
+  deadline: Todo[];
+  plannedDeadline: Todo[];
+  finished: Todo[];
 };
 
 type TodoHashmap = {
@@ -60,12 +60,8 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
     const tempHashmap: TodoHashmap = {};
     todos.forEach((todo) => {
       const deadline =
-        typeof todo.dueDate !== "undefined"
-          ? dayjs(todo.dueDate).format("YYYY-MM-DD")
-          : "";
-      const plannedDeadline =
-        typeof todo.plannedFinishDate !== "undefined"
-          ? dayjs(todo.plannedFinishDate).format("YYYY-MM-DD")
+        typeof todo.deadline !== "undefined"
+          ? dayjs(todo.deadline).format("YYYY-MM-DD")
           : "";
 
       if (todo.state !== "todo" && deadline !== "") {
@@ -89,17 +85,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
           tempHashmap[deadline] = {
             deadline: [todo],
             plannedDeadline: [],
-            finished: [],
-          };
-        }
-      }
-      if (plannedDeadline !== "") {
-        if (plannedDeadline in tempHashmap) {
-          tempHashmap[plannedDeadline].plannedDeadline.push(todo);
-        } else {
-          tempHashmap[plannedDeadline] = {
-            deadline: [],
-            plannedDeadline: [todo],
             finished: [],
           };
         }

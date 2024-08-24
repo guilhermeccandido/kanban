@@ -1,24 +1,26 @@
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import { AuthOptions, getServerSession } from "next-auth";
+import prisma from "@/lib/prismadb";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { NextAuthOptions, getServerSession } from "next-auth";
 import { Adapter } from "next-auth/adapters";
+import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-import clientPromise from "./mongodb";
 
-export const nextAuthOptions: AuthOptions = {
-  adapter: MongoDBAdapter(clientPromise) as Adapter,
-  secret: process.env.AUTH_SECRET!,
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma) as Adapter,
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+  ],
+  debug: process.env.NODE_ENV === "development",
   session: {
     strategy: "jwt",
   },
-  pages: {
-    signIn: "/login",
-  },
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
   callbacks: {
     async jwt({ token, user }: any) {
       if (user) {
@@ -41,6 +43,7 @@ export const nextAuthOptions: AuthOptions = {
       return "/";
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
-export const getAuthSession = () => getServerSession(nextAuthOptions);
+export const getAuthSession = () => getServerSession(authOptions);

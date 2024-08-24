@@ -2,7 +2,6 @@
 
 import { TASK_STATE_OPTIONS } from "@/lib/const";
 import { TodoEditRequest } from "@/lib/validators/todo";
-import { TodoType } from "@/model/Todo";
 import axios, { AxiosError } from "axios";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -10,13 +9,14 @@ import { FC } from "react";
 import { useMutation } from "react-query";
 import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
 import { useToast } from "../ui/use-toast";
+import { Todo } from "@prisma/client";
 
 const TodoColumn = dynamic(() => import("./TodoColumn"), {
   ssr: false,
 });
 
 type TodoColumnManagerProp = {
-  todos: Record<TodoType["state"], TodoType[]>;
+  todos: Record<Todo["state"], Todo[]>;
 };
 
 const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {

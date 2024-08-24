@@ -1,25 +1,33 @@
 import CalendarTaskCreator from "@/components/Calendar/CalendarTaskCreator";
 import TodoCalendar from "@/components/Calendar/TodoCalendar";
-import TaskCreator from "@/components/TaskCreator";
 import SideNavOpener from "@/components/SideNavOpener";
-import dbConnect from "@/lib/db";
 import { getAuthSession } from "@/lib/nextAuthOptions";
-import TodoModel, { TodoType } from "@/model/Todo";
+import { Todo } from "@prisma/client";
 import { HomeIcon } from "lucide-react";
 
 const Calendar = async () => {
   const session = await getAuthSession();
-  let todos: TodoType[] = [];
+  let todos: Todo[] = [];
   if (session?.user) {
     const { user } = session;
-    await dbConnect();
-    const result = await TodoModel.find({
-      Owner: user.id,
-      isDeleted: false,
-    })
-      .select({ title: 1, state: 1, _id: 1, dueDate: 1, plannedFinishDate: 1, description: 1})
-      .sort({ createdAt: -1 })
-      .exec();
+    const result = await prisma.todo.findMany({
+      where: {
+        ownerId: user.id,
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        title: true,
+        state: true,
+        deadline: true,
+        description: true,
+        order: true,
+        label: true,
+      },
+      orderBy: {
+        order: "asc",
+      },
+    });
     todos = JSON.parse(JSON.stringify(result));
   }
 

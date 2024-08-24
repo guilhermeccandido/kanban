@@ -1,10 +1,10 @@
 "use client";
 
-import { TodoType } from "@/model/Todo";
 import { FC } from "react";
 import HomeTaskCreator from "./HomeTaskCreator";
 import dynamic from "next/dynamic";
 import useDroppable from "@/hooks/useDroppable";
+import { Todo } from "@prisma/client";
 
 const TodoCard = dynamic(() => import("@/components/Home/TodoCard"), {
   ssr: false,
@@ -12,8 +12,8 @@ const TodoCard = dynamic(() => import("@/components/Home/TodoCard"), {
 
 type TodoColumnProp = {
   title: string;
-  todos: TodoType[];
-  state: TodoType["state"];
+  todos: Todo[];
+  state: Todo["state"];
 };
 
 const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
@@ -29,7 +29,7 @@ const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
         {todos
           ?.sort((a, b) => a.order - b.order)
           .map((todo) => {
-            return <TodoCard todo={todo} key={todo._id.toString()} />;
+            return <TodoCard todo={todo} key={todo.id.toString()} />;
           })}
       </div>
       <HomeTaskCreator state={state} />

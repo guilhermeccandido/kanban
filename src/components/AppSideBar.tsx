@@ -1,5 +1,6 @@
 "use client";
 
+import useClickOutSide from "@/hooks/useClickOutSide";
 import useResize from "@/hooks/useResize";
 import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
@@ -41,23 +42,7 @@ const AppSideBar = () => {
   const handleCloseDrawer = useCallback(() => {
     dispatch(closeSideBar());
   }, [dispatch]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        drawerRef.current &&
-        !drawerRef.current.contains(event.target as Node)
-      ) {
-        handleCloseDrawer();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [handleCloseDrawer]);
+  useClickOutSide(drawerRef, handleCloseDrawer);
 
   const content = useMemo(() => {
     return (

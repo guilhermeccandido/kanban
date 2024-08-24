@@ -1,10 +1,10 @@
 "use client";
 
 import { TodoType } from "@/model/Todo";
-import { openTodoCreator } from "@/redux/actions/todoAction";
 import { Plus } from "lucide-react";
 import { FC } from "react";
 import { useDispatch } from "react-redux";
+import { openTodoEditor } from "@/redux/actions/todoAction";
 
 type HomeTaskCreatorProps = {
   state: TodoType["state"];
@@ -14,7 +14,7 @@ const HomeTaskCreator: FC<HomeTaskCreatorProps> = ({ state }) => {
   const dispatch = useDispatch();
 
   const handleOpenDialog = () => {
-    dispatch(openTodoCreator("/", { state }));
+    dispatch(openTodoEditor({ state }, "/", "create"));
   };
 
   return (

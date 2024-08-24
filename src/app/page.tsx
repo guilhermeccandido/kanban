@@ -1,53 +1,53 @@
 import TodoColumnManager from "@/components/Home/TodoColumnManager";
 import SideNavOpener from "@/components/SideNavOpener";
 import { TASK_STATE_OPTIONS } from "@/lib/const";
-import dbConnect from "@/lib/db";
 import { getAuthSession } from "@/lib/nextAuthOptions";
-import TodoModel, { TodoType } from "@/model/Todo";
 import { HomeIcon } from "lucide-react";
+import prisma from "@/lib/prismadb";
+import { Todo } from "@prisma/client";
 
 const Home = async () => {
   const session = await getAuthSession();
-  const initialTodo: Record<TodoType["state"], TodoType[]> =
-    TASK_STATE_OPTIONS.reduce<Record<TodoType["state"], TodoType[]>>(
-      (acc, { value }) => {
-        acc[value] = [];
-        return acc;
-      },
-      {} as Record<TodoType["state"], TodoType[]>,
-    );
+  const initialTodo: Record<Todo["state"], Todo[]> = TASK_STATE_OPTIONS.reduce<
+    Record<Todo["state"], Todo[]>
+  >(
+    (acc, { value }) => {
+      acc[value] = [];
+      return acc;
+    },
+    {} as Record<Todo["state"], Todo[]>,
+  );
   let todos = initialTodo;
   if (session?.user) {
     const { user } = session;
-    await dbConnect();
-    const result = await TodoModel.find({
-      Owner: user.id,
-      isDeleted: false,
-    })
-      .select({
-        title: 1,
-        state: 1,
-        _id: 1,
-        dueDate: 1,
-        plannedFinishDate: 1,
-        description: 1,
-        order: 1,
-      })
-      .sort({ order: 1 })
-      .exec();
-    const allTodo: TodoType[] = JSON.parse(JSON.stringify(result));
-
-    todos = allTodo.reduce<Record<TodoType["state"], TodoType[]>>(
-      (acc, todo) => {
-        if (!Object.prototype.hasOwnProperty.call(acc, todo.state)) {
-          acc[todo.state] = [todo];
-        } else {
-          acc[todo.state].push(todo);
-        }
-        return acc;
+    const result = await prisma.todo.findMany({
+      where: {
+        ownerId: user.id,
+        isDeleted: false,
       },
-      initialTodo,
-    );
+      select: {
+        id: true,
+        title: true,
+        state: true,
+        deadline: true,
+        description: true,
+        order: true,
+        label: true,
+      },
+      orderBy: {
+        order: "asc",
+      },
+    });
+    const allTodo: Todo[] = JSON.parse(JSON.stringify(result));
+
+    todos = allTodo.reduce<Record<Todo["state"], Todo[]>>((acc, todo) => {
+      if (!Object.prototype.hasOwnProperty.call(acc, todo.state)) {
+        acc[todo.state] = [todo];
+      } else {
+        acc[todo.state].push(todo);
+      }
+      return acc;
+    }, initialTodo);
   }
 
   return (

@@ -1,23 +1,8 @@
-import { TodoType } from "@/model/Todo";
-import { TodoState } from "../reducers/todoReducer";
+import { OptionalTodo } from "@/types/todo";
 
 export enum todoActionType {
-  SORT_TODO_BY = "SORT_TODO_BY",
-  SORT_TODO_ASC = "SORT_TODO_ASC",
   OPEN_TODO_EDITOR = "OPEN_TODO_EDITOR",
   CLOSE_TODO_EDITOR = "CLOSE_TODO_EDITOR",
-  OPEN_TODO_CREATOR = "OPEN_TODO_CREATOR",
-  CLOSE_TODO_CREATOR = "CLOSE_TODO_CREATOR",
-}
-
-export interface SortTodoI {
-  type: todoActionType.SORT_TODO_BY;
-  payload: TodoState["sortedBy"];
-}
-
-export interface SortTodoAscI {
-  type: todoActionType.SORT_TODO_ASC;
-  payload: boolean;
 }
 
 export interface CloseTodoEditorI {
@@ -25,43 +10,20 @@ export interface CloseTodoEditorI {
   payload: null;
 }
 
-export interface OpenTodoEditorI {
+export type TaskEditType = "create" | "edit";
+
+export interface OpenTodoEditorI<T extends TaskEditType> {
   type: todoActionType.OPEN_TODO_EDITOR;
   payload: {
-    todo: TodoType;
+    todo: T extends "edit" ? OptionalTodo : TaskCreatorDefaultValues;
     taskEditorCaller: string;
+    type: T;
   };
-}
-
-export interface CloseTodoCreatorI {
-  type: todoActionType.CLOSE_TODO_CREATOR;
-  payload: null;
 }
 
 export type TaskCreatorDefaultValues = Partial<
-  Pick<TodoType, "dueDate" | "state">
+  Pick<OptionalTodo, "deadline" | "state">
 >;
-export interface openTodoCreatorI {
-  type: todoActionType.OPEN_TODO_CREATOR;
-  payload: {
-    taskCreatorCaller: string;
-    taskCreatorDefaultValues?: TaskCreatorDefaultValues;
-  };
-}
-
-export const sortTodoBy = (sortedBy: TodoState["sortedBy"]): SortTodoI => {
-  return {
-    type: todoActionType.SORT_TODO_BY,
-    payload: sortedBy,
-  };
-};
-
-export const sortTodoAsc = (asc: boolean): SortTodoAscI => {
-  return {
-    type: todoActionType.SORT_TODO_ASC,
-    payload: asc,
-  };
-};
 
 export const closeTodoEditor = (): CloseTodoEditorI => {
   return {
@@ -70,43 +32,22 @@ export const closeTodoEditor = (): CloseTodoEditorI => {
   };
 };
 
-export const openTodoEditor = (
-  todo: TodoType,
+export const openTodoEditor = <T extends TaskEditType>(
+  todo: T extends "edit" ? OptionalTodo : TaskCreatorDefaultValues,
   taskEditorCaller: string,
-): OpenTodoEditorI => {
+  type: T,
+): OpenTodoEditorI<T> => {
   return {
     type: todoActionType.OPEN_TODO_EDITOR,
     payload: {
       todo,
       taskEditorCaller,
-    },
-  };
-};
-
-export const CloseTodoCreator = (): CloseTodoCreatorI => {
-  return {
-    type: todoActionType.CLOSE_TODO_CREATOR,
-    payload: null,
-  };
-};
-
-export const openTodoCreator = (
-  taskCreatorCaller: string,
-  taskCreatorDefaultValues?: TaskCreatorDefaultValues,
-): openTodoCreatorI => {
-  return {
-    type: todoActionType.OPEN_TODO_CREATOR,
-    payload: {
-      taskCreatorCaller,
-      taskCreatorDefaultValues,
+      type,
     },
   };
 };
 
 export type TodoAction =
-  | SortTodoI
-  | SortTodoAscI
   | CloseTodoEditorI
-  | OpenTodoEditorI
-  | CloseTodoCreatorI
-  | openTodoCreatorI;
+  | OpenTodoEditorI<"create">
+  | OpenTodoEditorI<"edit">;
