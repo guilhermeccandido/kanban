@@ -3,13 +3,13 @@ import {
   closeTodoEditor,
 } from "@/redux/actions/todoAction";
 import { ReduxState } from "@/redux/store";
-import { OptionalTodo } from "@/types/todo";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomizedDialog from "./CustomizedDialog";
 import TaskCreateFormController from "./TaskCreateFormController";
 import TaskEditFormController from "./TaskEditFormController";
+import { Todo } from "@prisma/client";
 
 const TaskEditFormDialog: FC = () => {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ const TaskEditFormDialog: FC = () => {
     (state) => state.todo.isTodoEditorOpen,
   );
 
-  const task = useSelector<ReduxState, OptionalTodo | TaskCreatorDefaultValues>(
+  const task = useSelector<ReduxState, Todo | TaskCreatorDefaultValues>(
     (state) => state.todo.targetTodo,
   );
 
@@ -49,7 +49,7 @@ const TaskEditFormDialog: FC = () => {
         <TaskEditFormController
           handleOnSuccess={handleOnSuccess}
           handleOnClose={onClose}
-          task={task as OptionalTodo}
+          task={task as Todo}
           key={"edit"}
         />
       ) : (

@@ -1,4 +1,4 @@
-import { OptionalTodo } from "@/types/todo";
+import { Todo } from "@prisma/client";
 
 export enum todoActionType {
   OPEN_TODO_EDITOR = "OPEN_TODO_EDITOR",
@@ -15,7 +15,7 @@ export type TaskEditType = "create" | "edit";
 export interface OpenTodoEditorI<T extends TaskEditType> {
   type: todoActionType.OPEN_TODO_EDITOR;
   payload: {
-    todo: T extends "edit" ? OptionalTodo : TaskCreatorDefaultValues;
+    todo: T extends "edit" ? Todo : TaskCreatorDefaultValues;
     taskEditorCaller: string;
     type: T;
   };
@@ -33,7 +33,7 @@ export const closeTodoEditor = (): CloseTodoEditorI => {
 };
 
 export const openTodoEditor = <T extends TaskEditType>(
-  todo: T extends "edit" ? OptionalTodo : TaskCreatorDefaultValues,
+  todo: T extends "edit" ? Todo : TaskCreatorDefaultValues,
   taskEditorCaller: string,
   type: T,
 ): OpenTodoEditorI<T> => {

@@ -47,7 +47,6 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
       order,
     };
 
-    // @ts-ignore
     const result = await handleUpdateState(payload);
   };
 

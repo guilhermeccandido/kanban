@@ -1,13 +1,13 @@
 "use client";
 
-import { TodoType } from "@/model/Todo";
+import { openTodoEditor } from "@/redux/actions/todoAction";
+import { Todo } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { FC } from "react";
 import { useDispatch } from "react-redux";
-import { openTodoEditor } from "@/redux/actions/todoAction";
 
 type HomeTaskCreatorProps = {
-  state: TodoType["state"];
+  state: Todo["state"];
 };
 
 const HomeTaskCreator: FC<HomeTaskCreatorProps> = ({ state }) => {

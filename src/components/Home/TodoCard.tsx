@@ -2,13 +2,13 @@
 
 import useDraggable from "@/hooks/useDraggable";
 import { openTodoEditor } from "@/redux/actions/todoAction";
-import { OptionalTodo } from "@/types/todo";
+import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
 import { FC, useCallback } from "react";
 import { useDispatch } from "react-redux";
 
 type TodoProps = {
-  todo: OptionalTodo;
+  todo: Todo;
 };
 
 const TodoCard: FC<TodoProps> = ({ todo }) => {

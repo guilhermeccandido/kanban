@@ -20,7 +20,6 @@ type TodoCalendarProps = {
 
 export type TodoOfDay = {
   deadline: Todo[];
-  plannedDeadline: Todo[];
   finished: Todo[];
 };
 
@@ -64,14 +63,13 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
           ? dayjs(todo.deadline).format("YYYY-MM-DD")
           : "";
 
-      if (todo.state !== "todo" && deadline !== "") {
+      if (todo.state !== "TODO" && deadline !== "") {
         if (deadline in tempHashmap) {
           tempHashmap[deadline].finished.push(todo);
           return;
         } else {
           tempHashmap[deadline] = {
             deadline: [],
-            plannedDeadline: [],
             finished: [todo],
           };
           return;
@@ -84,7 +82,6 @@ const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
         } else {
           tempHashmap[deadline] = {
             deadline: [todo],
-            plannedDeadline: [],
             finished: [],
           };
         }

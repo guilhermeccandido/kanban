@@ -1,4 +1,3 @@
-import { OptionalTodo } from "@/types/todo";
 import {
   TaskCreatorDefaultValues,
   TaskEditType,
@@ -8,7 +7,7 @@ import {
 
 export interface TodoState {
   isTodoEditorOpen: boolean;
-  targetTodo: OptionalTodo | TaskCreatorDefaultValues;
+  targetTodo: Todo | TaskCreatorDefaultValues;
   taskEditorCaller: string;
   taskEditType: TaskEditType | null;
 }

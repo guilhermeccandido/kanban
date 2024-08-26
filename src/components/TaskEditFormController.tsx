@@ -6,7 +6,6 @@ import {
   TodoEditValidator,
 } from "@/lib/validators/todo";
 import todoEditRequest from "@/requests/todoEditRequest";
-import { OptionalTodo } from "@/types/todo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { FC } from "react";
@@ -15,11 +14,12 @@ import { useMutation } from "react-query";
 import "react-quill/dist/quill.snow.css";
 import TaskModificationForm from "./TaskModificationForm";
 import { useToast } from "./ui/use-toast";
+import { Todo } from "@prisma/client";
 
 type TaskEditFormProps = {
   handleOnSuccess: () => void;
   handleOnClose: () => void;
-  task: OptionalTodo;
+  task: Todo;
 };
 
 const TaskEditFormController: FC<TaskEditFormProps> = ({

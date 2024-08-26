@@ -14,4 +14,6 @@ type OptionalNullable<T> = {
   [K in keyof PickNotNullable<T>]: T[K];
 };
 
-export type OptionalTodo = OptionalNullable<Todo>;
+declare global {
+  interface OptionalTodo extends OptionalNullable<Todo> {}
+}

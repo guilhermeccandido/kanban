@@ -29,11 +29,10 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useToast } from "./ui/use-toast";
-import { OptionalTodo } from "@/types/todo";
 
 type TaskEditFormProps = {
   handleOnClose: () => void;
-  task: Partial<OptionalTodo>;
+  task: Partial<Todo>;
   title: string;
   enableDelete?: boolean;
   deleteMutationFunctionReturn?: UseMutationResult<any, AxiosError, any, any>;
