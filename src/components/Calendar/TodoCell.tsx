@@ -18,7 +18,7 @@ const TodoCell: FC<TodoCellProps> = ({ todos, className, ddlType }) => {
     todo: Todo,
   ) => {
     e.stopPropagation();
-    dispatch(openTodoEditor(todo, "/calendar", "create"));
+    dispatch(openTodoEditor(todo, "/calendar", "edit"));
   };
 
   const dotColor = useCallback(

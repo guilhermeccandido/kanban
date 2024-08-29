@@ -37,17 +37,17 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
     },
   });
 
-  const handleDragEnd = async (dragEndEvent: OnDragEndEvent) => {
+  const handleDragEnd = (dragEndEvent: OnDragEndEvent) => {
     const { over, from, item, order } = dragEndEvent;
-    if (!over || !from) return;
+    if (!over || !from || !item) return;
 
     const payload = {
-      state: over,
-      id: item,
+      state: over as Todo["state"],
+      id: item as string,
       order,
     };
 
-    const result = await handleUpdateState(payload);
+    handleUpdateState(payload);
   };
 
   return (

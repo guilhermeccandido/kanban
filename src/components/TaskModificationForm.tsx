@@ -3,6 +3,7 @@
 import useBreakpoint from "@/hooks/useBreakpoint";
 import { TASK_STATE_OPTIONS } from "@/lib/const";
 import { cn } from "@/lib/utils";
+import { Todo } from "@prisma/client";
 import {
   Popover,
   PopoverContent,
@@ -22,9 +23,8 @@ import { Calendar } from "./ui/calendar";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";

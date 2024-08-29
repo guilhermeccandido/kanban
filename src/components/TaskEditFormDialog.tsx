@@ -56,7 +56,7 @@ const TaskEditFormDialog: FC = () => {
         <TaskCreateFormController
           handleOnSuccess={handleOnSuccess}
           handleOnClose={onClose}
-          task={task}
+          task={task as TaskCreatorDefaultValues}
           key={"create"}
         />
       )}
