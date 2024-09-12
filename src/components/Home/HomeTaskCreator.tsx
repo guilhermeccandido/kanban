@@ -1,6 +1,6 @@
 "use client";
 
-import { openTodoEditor } from "@/redux/actions/todoAction";
+import { openTodoEditor } from "@/redux/actions/todoEditorAction";
 import { Todo } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { FC } from "react";

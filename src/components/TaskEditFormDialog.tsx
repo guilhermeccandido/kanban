@@ -1,7 +1,7 @@
 import {
   TaskCreatorDefaultValues,
   closeTodoEditor,
-} from "@/redux/actions/todoAction";
+} from "@/redux/actions/todoEditorAction";
 import { ReduxState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
@@ -16,19 +16,19 @@ const TaskEditFormDialog: FC = () => {
   const router = useRouter();
 
   const isOpen = useSelector<ReduxState, boolean>(
-    (state) => state.todo.isTodoEditorOpen,
+    (state) => state.editTodo.isTodoEditorOpen,
   );
 
   const task = useSelector<ReduxState, Todo | TaskCreatorDefaultValues>(
-    (state) => state.todo.targetTodo,
+    (state) => state.editTodo.targetTodo,
   );
 
   const caller = useSelector<ReduxState, string>(
-    (state) => state.todo.taskEditorCaller,
+    (state) => state.editTodo.taskEditorCaller,
   );
 
   const type = useSelector<ReduxState, "create" | "edit">(
-    (state) => state.todo.taskEditType!,
+    (state) => state.editTodo.taskEditType!,
   );
 
   const onClose = () => {

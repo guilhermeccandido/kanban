@@ -1,28 +1,28 @@
 import { Todo } from "@prisma/client";
 import {
   TaskCreatorDefaultValues,
-  TaskEditType,
-  TodoAction,
-  todoActionType,
-} from "../actions/todoAction";
+  TodoEditType,
+  TodoEditorAction,
+  TodoEditorActionType,
+} from "../actions/todoEditorAction";
 
-export interface TodoState {
+export interface TodoEditorState {
   isTodoEditorOpen: boolean;
   targetTodo: Todo | TaskCreatorDefaultValues;
   taskEditorCaller: string;
-  taskEditType: TaskEditType | null;
+  taskEditType: TodoEditType | null;
 }
 
-const initialState: TodoState = {
+const initialState: TodoEditorState = {
   isTodoEditorOpen: false,
   targetTodo: {},
   taskEditorCaller: "",
   taskEditType: null,
 };
 
-const reducer = (state = initialState, action: TodoAction): TodoState => {
+const reducer = (state = initialState, action: TodoEditorAction): TodoEditorState => {
   switch (action.type) {
-    case todoActionType.OPEN_TODO_EDITOR:
+    case TodoEditorActionType.OPEN_TODO_EDITOR:
       return {
         ...state,
         isTodoEditorOpen: true,
@@ -35,7 +35,7 @@ const reducer = (state = initialState, action: TodoAction): TodoState => {
         taskEditorCaller: action.payload.taskEditorCaller,
         taskEditType: action.payload.type,
       };
-    case todoActionType.CLOSE_TODO_EDITOR:
+    case TodoEditorActionType.CLOSE_TODO_EDITOR:
       return {
         ...state,
         isTodoEditorOpen: false,

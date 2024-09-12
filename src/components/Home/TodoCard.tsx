@@ -1,7 +1,7 @@
 "use client";
 
 import useDraggable from "@/hooks/useDraggable";
-import { openTodoEditor } from "@/redux/actions/todoAction";
+import { openTodoEditor } from "@/redux/actions/todoEditorAction";
 import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
 import { FC, useCallback } from "react";
