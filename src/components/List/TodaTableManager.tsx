@@ -7,6 +7,8 @@ import TodoTable from "./TodoTable";
 import { Todo } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import { Button } from "../ui/button";
+import { ArrowUpDown } from "lucide-react";
 
 const TodoTableManager = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -20,7 +22,16 @@ const TodoTableManager = () => {
   const todoColumns: ColumnDef<Todo>[] = [
     {
       accessorKey: "title",
-      header: "Title",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          <span className="mr-2">Title</span>
+          <ArrowUpDown size={16} />
+        </Button>
+      ),
     },
     {
       accessorKey: "state",
@@ -28,7 +39,16 @@ const TodoTableManager = () => {
     },
     {
       accessorKey: "deadline",
-      header: "Deadline",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          <span className="mr-2">Deadline</span>
+          <ArrowUpDown size={16} />
+        </Button>
+      ),
       cell: ({ row }) => {
         if (!row.original.deadline) return null;
 
@@ -59,14 +79,32 @@ const TodoTableManager = () => {
     },
     {
       accessorKey: "createdAt",
-      header: "Created At",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          <span className="mr-2">Created At</span>
+          <ArrowUpDown size={16} />
+        </Button>
+      ),
       cell: ({ row }) => {
         return dayjs(row.original.createdAt).format("YYYY/MM/DD");
       },
     },
     {
       accessorKey: "updatedAt",
-      header: "Updated At",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          <span className="mr-2">Updated At</span>
+          <ArrowUpDown size={16} />
+        </Button>
+      ),
       cell: ({ row }) => {
         return dayjs(row.original.updatedAt).format("YYYY/MM/DD");
       },

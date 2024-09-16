@@ -5,8 +5,10 @@ import { Todo } from "@prisma/client";
 import {
   ColumnDef,
   Row,
+  SortingState,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useRef, useState } from "react";
@@ -26,15 +28,22 @@ type TodoTableProps<TValue> = {
 };
 
 const TodoTable = <TValue,>({ columns, data }: TodoTableProps<TValue>) => {
-  const table = useReactTable({
-    columns,
-    data,
-    getCoreRowModel: getCoreRowModel(),
-  });
   const dispatch = useDispatch();
   const tableRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const table = useReactTable({
+    columns,
+    data,
+    getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+  });
 
   const handleRowClick = (row: Row<Todo>) => {
     const { original } = row;
