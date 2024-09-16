@@ -2,11 +2,14 @@
 
 import useClickOutSide from "@/hooks/useClickOutSide";
 import useResize from "@/hooks/useResize";
+import { cn } from "@/lib/utils";
 import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
-import { Calendar, Dumbbell, List, ListIcon, Menu } from "lucide-react";
+import { Calendar, Columns3, ListIcon, Menu } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
+import { useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 type NavContent = {
@@ -17,8 +20,8 @@ type NavContent = {
 
 const NAV_CONTENT: NavContent[] = [
   {
-    title: "Todo",
-    icon: <Dumbbell />,
+    title: "Board",
+    icon: <Columns3 />,
     link: "/",
   },
   {
@@ -29,7 +32,7 @@ const NAV_CONTENT: NavContent[] = [
   {
     title: "List",
     icon: <ListIcon />,
-    link: "list",
+    link: "/list",
   },
 ];
 
@@ -38,6 +41,7 @@ const AppSideBar = () => {
   const isOpen = useSelector<ReduxState, boolean>(
     (state) => state.app.isSideBarOpen,
   );
+  const currentPath = usePathname();
 
   const dispatch = useDispatch();
   const size = useResize({ el: window });
@@ -52,22 +56,32 @@ const AppSideBar = () => {
   const content = useMemo(() => {
     return (
       <>
-        {NAV_CONTENT.map((content, index) => (
-          <div key={index} className="pt-2">
-            <Link href={content.link} passHref legacyBehavior>
-              <a
-                onClick={handleCloseDrawer}
-                className="flex gap-5 content-center pb-1"
-              >
-                <span>{content.icon}</span>
-                <span>{content.title}</span>
-              </a>
-            </Link>
-          </div>
-        ))}
+        {NAV_CONTENT.map((content, index) => {
+          return (
+            <div
+              key={index}
+              className={cn(
+                "px-2 pb-1 pt-2 rounded-md hover:bg-secondary",
+                content.link === currentPath
+                  ? "bg-secondary text-white"
+                  : "bg-transparent",
+              )}
+            >
+              <Link href={content.link} passHref legacyBehavior>
+                <a
+                  onClick={handleCloseDrawer}
+                  className="flex gap-5 content-center pb-1"
+                >
+                  <span>{content.icon}</span>
+                  <span>{content.title}</span>
+                </a>
+              </Link>
+            </div>
+          );
+        })}
       </>
     );
-  }, [handleCloseDrawer]);
+  }, [handleCloseDrawer, currentPath]);
 
   if (!isOpen) return null;
 
@@ -93,7 +107,7 @@ const AppSideBar = () => {
           <Menu onClick={handleCloseDrawer} />
         </div>
       </div>
-      {content}
+      <div className="flex flex-col gap-1">{content}</div>
     </div>
   );
 };
