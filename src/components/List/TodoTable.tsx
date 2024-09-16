@@ -32,7 +32,12 @@ const TodoTable = <TValue,>({ columns, data }: TodoTableProps<TValue>) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "state",
+      desc: false,
+    },
+  ]);
 
   const table = useReactTable({
     columns,

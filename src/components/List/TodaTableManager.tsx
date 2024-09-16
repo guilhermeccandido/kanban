@@ -1,14 +1,14 @@
 "use client";
 
 import { selectNotDeletedTodos } from "@/redux/selector/todoSelector";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import TodoTable from "./TodoTable";
-import { Todo } from "@prisma/client";
+import { State, Todo } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
+import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { Button } from "../ui/button";
-import { ArrowUpDown } from "lucide-react";
+import TableSortedIcon from "./TableSortedIcon";
+import TodoTable from "./TodoTable";
 
 const TodoTableManager = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,6 +18,7 @@ const TodoTableManager = () => {
   }, []);
 
   const todos = useSelector(selectNotDeletedTodos);
+  const order = useMemo(() => Object.values(State), []);
 
   const todoColumns: ColumnDef<Todo>[] = [
     {
@@ -29,13 +30,34 @@ const TodoTableManager = () => {
           className="p-0"
         >
           <span className="mr-2">Title</span>
-          <ArrowUpDown size={16} />
+          <TableSortedIcon
+            isSorted={!!column.getIsSorted()}
+            isSortedDesc={column.getIsSorted() === "desc"}
+          />
         </Button>
       ),
     },
     {
       accessorKey: "state",
-      header: "State",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0"
+        >
+          <span className="mr-2">State</span>
+          <TableSortedIcon
+            isSorted={!!column.getIsSorted()}
+            isSortedDesc={column.getIsSorted() === "desc"}
+          />
+        </Button>
+      ),
+      sortingFn: (rowA, rowB) => {
+        return (
+          order.indexOf(rowA.original.state) -
+          order.indexOf(rowB.original.state)
+        );
+      },
     },
     {
       accessorKey: "deadline",
@@ -46,7 +68,10 @@ const TodoTableManager = () => {
           className="p-0"
         >
           <span className="mr-2">Deadline</span>
-          <ArrowUpDown size={16} />
+          <TableSortedIcon
+            isSorted={!!column.getIsSorted()}
+            isSortedDesc={column.getIsSorted() === "desc"}
+          />
         </Button>
       ),
       cell: ({ row }) => {
@@ -86,7 +111,10 @@ const TodoTableManager = () => {
           className="p-0"
         >
           <span className="mr-2">Created At</span>
-          <ArrowUpDown size={16} />
+          <TableSortedIcon
+            isSorted={!!column.getIsSorted()}
+            isSortedDesc={column.getIsSorted() === "desc"}
+          />
         </Button>
       ),
       cell: ({ row }) => {
@@ -102,7 +130,10 @@ const TodoTableManager = () => {
           className="p-0"
         >
           <span className="mr-2">Updated At</span>
-          <ArrowUpDown size={16} />
+          <TableSortedIcon
+            isSorted={!!column.getIsSorted()}
+            isSortedDesc={column.getIsSorted() === "desc"}
+          />
         </Button>
       ),
       cell: ({ row }) => {
