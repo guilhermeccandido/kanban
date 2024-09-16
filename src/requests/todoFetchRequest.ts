@@ -9,6 +9,7 @@ export const todoFetchRequest = async (session: Session | null) => {
   const todos = await prisma.todo.findMany({
     where: {
       ownerId: session.user.id,
+      isDeleted: false,
     },
     orderBy: {
       order: "asc",

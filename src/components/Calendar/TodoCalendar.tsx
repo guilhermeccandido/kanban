@@ -1,21 +1,19 @@
 "use client";
 
 import useResize from "@/hooks/useResize";
+import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  FC,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import DayCell from "./DayCell";
-import { Todo } from "@prisma/client";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { ReduxState } from "@/redux/store";
-import { selectNotDeletedTodos } from "@/redux/selector/todoSelector";
+import DayCell from "./DayCell";
+import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
+import { selectTodos } from "@/redux/selector/todoSelector";
+
+const HEIGHT_OF_CELL_TASK = 26;
+const MAX_CELL_FOR_FIVE_ROW = 35;
+const MAX_CELL_FOR_SIX_ROW = 42;
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export type TodoOfDay = {
   deadline: Todo[];
@@ -26,239 +24,211 @@ type TodoHashmap = {
   [key: string]: TodoOfDay;
 };
 
-const HEIGHT_OF_CELL_TASK = 26;
-
-const TodoCalendar = () => {
-  const todos = useSelector(selectNotDeletedTodos);
-  const MAX_CELL_FOR_FIVE_ROW = 35;
-  const MAX_CELL_FOR_SIX_ROW = 42;
+const TodoCalendar: FC = () => {
+  const todos = useSelector(selectTodos);
   const [currentMonth, setCurrentMonth] = useState(dayjs().month() + 1);
   const [currentYear, setCurrentYear] = useState(dayjs().year());
   const [todoHashmap, setTodoHashmap] = useState<TodoHashmap>({});
-  const [numberOfTaskdisplaying, setNumberOfTaskdisplaying] = useState(3);
+
   const calendarRef = useRef<HTMLDivElement>(null);
-  const { height: calendarHeight } = useResize({
-    el: calendarRef?.current,
-  });
+  const { height: calendarHeight } = useResize({ el: calendarRef?.current });
 
-  const numberOfRow = Math.ceil(
-    (dayjs().year(currentYear).month(currentMonth).startOf("month").day() +
-      dayjs().month(currentMonth).daysInMonth()) /
-      7,
-  );
-
-  useLayoutEffect(() => {
-    const newNumberOfTaskdisplaying = Math.trunc(
-      (calendarHeight / numberOfRow - 40) / HEIGHT_OF_CELL_TASK,
-    );
-    setNumberOfTaskdisplaying(newNumberOfTaskdisplaying);
-  }, [calendarHeight, numberOfRow]);
-
-  const updateTodoHashmap = useCallback(() => {
-    if (todos.length === 0) return;
-    const tempHashmap: TodoHashmap = {};
-    todos.forEach((todo) => {
-      const deadline =
-        typeof todo.deadline !== "undefined"
-          ? dayjs(todo.deadline).format("YYYY-MM-DD")
-          : "";
-
-      if (todo.state !== "TODO" && deadline !== "") {
-        if (deadline in tempHashmap) {
-          tempHashmap[deadline].finished.push(todo);
-          return;
-        } else {
-          tempHashmap[deadline] = {
-            deadline: [],
-            finished: [todo],
-          };
-          return;
-        }
-      }
-
-      if (deadline !== "") {
-        if (deadline in tempHashmap) {
-          tempHashmap[deadline].deadline.push(todo);
-        } else {
-          tempHashmap[deadline] = {
-            deadline: [todo],
-            finished: [],
-          };
-        }
-      }
-    });
-    setTodoHashmap(tempHashmap);
-  }, [todos, setTodoHashmap]);
-
-  useEffect(() => {
-    updateTodoHashmap();
-  }, [todos, currentYear, currentMonth, updateTodoHashmap]);
-
-  const renderCalendarDays = (
-    currentYear: number,
-    currentMonth: number,
-    todoHashmap: TodoHashmap,
-  ) => {
+  const numberOfRows = useMemo(() => {
+    const firstDay = dayjs()
+      .year(currentYear)
+      .month(currentMonth - 1)
+      .startOf("month")
+      .day();
     const daysInMonth = dayjs()
       .month(currentMonth - 1)
       .daysInMonth();
-    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-    const prevMonthYear = currentYear - (currentMonth === 1 ? 1 : 0);
-    const nextMonth = (currentMonth + 1) % 13;
-    const nextMonthYear = currentYear + (currentMonth === 12 ? 1 : 0);
+    return Math.ceil((firstDay + daysInMonth) / 7);
+  }, [currentMonth, currentYear]);
 
-    const daysArray = Array.from(
-      { length: daysInMonth },
-      (_, index) => index + 1,
+  const numberOfTaskdisplaying = useMemo(() => {
+    return Math.trunc(
+      (calendarHeight / numberOfRows - 40) / HEIGHT_OF_CELL_TASK,
     );
+  }, [calendarHeight, numberOfRows]);
 
+  const updateTodoHashmap = useCallback(() => {
+    if (todos.length === 0) return;
+
+    const newHashmap: TodoHashmap = {};
+    todos.forEach((todo) => {
+      const deadline = todo.deadline
+        ? dayjs(todo.deadline).format("YYYY-MM-DD")
+        : "";
+
+      if (!deadline) return;
+
+      const isFinished = todo.state !== "TODO";
+      if (!newHashmap[deadline]) {
+        newHashmap[deadline] = { deadline: [], finished: [] };
+      }
+
+      if (isFinished) {
+        newHashmap[deadline].finished.push(todo);
+      } else {
+        newHashmap[deadline].deadline.push(todo);
+      }
+    });
+
+    setTodoHashmap(newHashmap);
+  }, [todos]);
+
+  useEffect(() => {
+    updateTodoHashmap();
+  }, [todos, currentMonth, currentYear, updateTodoHashmap]);
+
+  const handleChangeMonth = (isNext: boolean) => {
+    setCurrentMonth((prevMonth) => {
+      const newMonth = isNext
+        ? (prevMonth % 12) + 1
+        : prevMonth === 1
+          ? 12
+          : prevMonth - 1;
+      if (newMonth === 1 && isNext) setCurrentYear((prev) => prev + 1);
+      if (newMonth === 12 && !isNext) setCurrentYear((prev) => prev - 1);
+      return newMonth;
+    });
+  };
+
+  const renderWeekdayHeaders = useMemo(
+    () =>
+      WEEKDAYS.map((weekday) => (
+        <div
+          className="text-center flex-1 border-zinc-300 border-r border-b"
+          key={weekday}
+        >
+          <span>{weekday}</span>
+        </div>
+      )),
+    [],
+  );
+
+  const renderCalendarDays = useMemo(() => {
+    const today = dayjs().format("YYYY-MM-DD");
+    const daysInMonth = dayjs()
+      .year(currentYear)
+      .month(currentMonth - 1)
+      .daysInMonth();
     const firstDayOfMonth = dayjs()
       .year(currentYear)
       .month(currentMonth - 1)
       .startOf("month")
       .day();
-    const daysInPrevMonth = dayjs()
+    const prevMonthDays = dayjs()
       .year(currentYear)
-      .month(currentMonth - 1)
-      .subtract(1, "month")
+      .month(currentMonth - 2)
       .daysInMonth();
 
-    const prevMonthCells = Array.from(
-      { length: firstDayOfMonth },
-      (_, index) => {
-        const day = daysInPrevMonth - firstDayOfMonth + index + 1;
-        const dayCode = `${prevMonthYear}-${
-          prevMonth >= 10 ? prevMonth : "0" + prevMonth
-        }-${day >= 10 ? day : "0" + day}`;
-        const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
+    const generateDayCode = (year: number, month: number, day: number) =>
+      `${year}-${month >= 10 ? month : "0" + month}-${day >= 10 ? day : "0" + day}`;
+
+    const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1).map(
+      (day) => {
+        const dayCode = generateDayCode(currentYear, currentMonth, day);
         return (
           <DayCell
             key={dayCode}
             dayCode={dayCode}
-            todos={todos}
+            todos={todoHashmap[dayCode]}
             numberOfTaskdisplaying={numberOfTaskdisplaying}
+            today={dayCode === today}
           />
         );
       },
     );
 
-    const nextMonthCells = Array.from(
-      {
-        length:
-          (MAX_CELL_FOR_FIVE_ROW - daysInMonth - firstDayOfMonth > 0
-            ? MAX_CELL_FOR_FIVE_ROW
-            : MAX_CELL_FOR_SIX_ROW) -
-          daysInMonth -
-          prevMonthCells.length,
-      },
-      (_, index) => {
-        const dayCode = `${nextMonthYear}-${
-          nextMonth >= 10 ? nextMonth : "0" + nextMonth
-        }-${index + 1 >= 10 ? index + 1 : "0" + (index + 1)}`;
-        const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
-        return (
-          <DayCell
-            key={dayCode}
-            dayCode={dayCode}
-            todos={todos}
-            numberOfTaskdisplaying={numberOfTaskdisplaying}
-          />
-        );
-      },
-    );
-
-    const calendarDays = daysArray.map((day, index) => {
-      const dayCode = `${currentYear}-${
-        currentMonth >= 10 ? currentMonth : "0" + currentMonth
-      }-${day >= 10 ? day : "0" + day}`;
-      const todos = dayCode in todoHashmap ? todoHashmap[dayCode] : undefined;
+    const prevMonthCells = Array.from({ length: firstDayOfMonth }, (_, i) => {
+      const day = prevMonthDays - firstDayOfMonth + i + 1;
+      const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+      const year = currentMonth === 1 ? currentYear - 1 : currentYear;
+      const dayCode = generateDayCode(year, prevMonth, day);
       return (
         <DayCell
           key={dayCode}
           dayCode={dayCode}
-          todos={todos}
+          todos={todoHashmap[dayCode]}
           numberOfTaskdisplaying={numberOfTaskdisplaying}
+          today={dayCode === today}
         />
       );
     });
-    const allCells = [...prevMonthCells, ...calendarDays, ...nextMonthCells];
 
-    const rows: JSX.Element[][] = [];
-    let cells: JSX.Element[] = [];
+    const totalCells = prevMonthCells.length + daysArray.length;
+    const nextMonthCells = Array.from(
+      {
+        length:
+          (totalCells > MAX_CELL_FOR_FIVE_ROW
+            ? MAX_CELL_FOR_SIX_ROW
+            : MAX_CELL_FOR_FIVE_ROW) - totalCells,
+      },
+      (_, i) => {
+        const nextMonth = (currentMonth % 12) + 1;
+        const year = currentMonth === 12 ? currentYear + 1 : currentYear;
+        const dayCode = generateDayCode(year, nextMonth, i + 1);
+        return (
+          <DayCell
+            key={dayCode}
+            dayCode={dayCode}
+            todos={todoHashmap[dayCode]}
+            numberOfTaskdisplaying={numberOfTaskdisplaying}
+            today={dayCode === today}
+          />
+        );
+      },
+    );
 
-    allCells.forEach((cell, index) => {
-      if (index % 7 !== 0 || index === 0) {
-        cells.push(cell);
-      } else {
-        rows.push(cells);
-        cells = [];
-        cells.push(cell);
-      }
-      if (index === allCells.length - 1) {
-        rows.push(cells);
-      }
-    });
-
-    return rows.map((row, index) => (
-      <div className="flex justify-around flex-1 overflow-hidden" key={index}>
-        {row}
+    const allCells = [...prevMonthCells, ...daysArray, ...nextMonthCells];
+    return Array.from({ length: allCells.length / 7 }, (_, i) => (
+      <div className="flex justify-around flex-1 overflow-hidden" key={i}>
+        {allCells.slice(i * 7, i * 7 + 7)}
       </div>
     ));
-  };
+  }, [currentMonth, currentYear, todoHashmap, numberOfTaskdisplaying]);
 
-  const getWeekdayHeaders = () => {
-    const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    return weekdays.map((weekday) => (
-      <div
-        className="text-center flex-1 border-zinc-300 border-r border-b"
-        key={weekday}
-      >
-        <span>{weekday}</span>
-      </div>
-    ));
-  };
+  const handleDragEnd = (dragEndEvent: OnDragEndEvent) => {
+    const { over, from, item, order } = dragEndEvent;
+    if (!over || !from || !item) return;
 
-  const handleChangeToNextMonth = () => {
-    const nextMonth = (currentMonth % 12) + 1;
-    if (nextMonth === 1) {
-      setCurrentYear((prev) => prev + 1);
-    }
-    setCurrentMonth(nextMonth);
-  };
+    const payload = {
+      state: over as Todo["deadline"],
+      id: item as string,
+      order,
+    };
 
-  const handleChangeToPrevMonth = () => {
-    const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-    if (prevMonth === 12) {
-      setCurrentYear((prev) => prev - 1);
-    }
-    setCurrentMonth(prevMonth);
+    console.log(payload);
   };
 
   return (
-    <div className="flex flex-col gap-2 flex-auto">
-      <div className="flex justify-between items-center flex-none">
-        <button onClick={handleChangeToPrevMonth}>
-          <ChevronLeft size={20} />
-        </button>
-        <span className="text-lg font-semibold">
-          {dayjs()
-            .month(currentMonth - 1)
-            .format("MMMM")}{" "}
-          {currentYear}
-        </span>
-        <button onClick={handleChangeToNextMonth}>
-          <ChevronRight size={20} />
-        </button>
-      </div>
-      <div className="flex flex-col gap-2 flex-auto border-zinc-300 border-l border-t">
-        <div className="w-full flex flex-col h-full">
-          <div className="flex justify-around">{getWeekdayHeaders()}</div>
-          <div className="flex flex-col flex-1" ref={calendarRef}>
-            {renderCalendarDays(currentYear, currentMonth, todoHashmap)}
+    <DndContextProvider>
+      <div className="flex flex-col gap-2 flex-auto">
+        <div className="flex justify-between items-center flex-none">
+          <button onClick={() => handleChangeMonth(false)}>
+            <ChevronLeft size={20} />
+          </button>
+          <span className="text-lg font-semibold">
+            {dayjs()
+              .month(currentMonth - 1)
+              .format("MMMM")}{" "}
+            {currentYear}
+          </span>
+          <button onClick={() => handleChangeMonth(true)}>
+            <ChevronRight size={20} />
+          </button>
+        </div>
+        <div className="flex flex-col gap-2 flex-auto border-zinc-300 border-l border-t">
+          <div className="w-full flex flex-col h-full">
+            <div className="flex justify-around">{renderWeekdayHeaders}</div>
+            <div className="flex flex-col flex-1" ref={calendarRef}>
+              {renderCalendarDays}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </DndContextProvider>
   );
 };
 

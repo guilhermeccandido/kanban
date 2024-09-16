@@ -2,14 +2,10 @@ import { Todo } from "@prisma/client";
 import { createSelector } from "reselect";
 import { ReduxState } from "../store";
 
-const selectTodos = (state: ReduxState) => state.todo.todos;
-
-export const selectNotDeletedTodos = createSelector([selectTodos], (todos) =>
-  todos.filter((todo) => !todo.isDeleted),
-);
+export const selectTodos = (state: ReduxState) => state.todo.todos;
 
 export const selectTodoByState = createSelector(
-  [selectNotDeletedTodos],
+  [selectTodos],
   (todos) =>
     todos.reduce(
       (acc, todo) => {

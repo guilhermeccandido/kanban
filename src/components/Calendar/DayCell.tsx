@@ -4,17 +4,20 @@ import { useDispatch } from "react-redux";
 import { TodoOfDay } from "./TodoCalendar";
 import TodoCell from "./TodoCell";
 import { openTodoEditor } from "@/redux/actions/todoEditorAction";
+import { cn } from "@/lib/utils";
 
 type DayCellProps = {
   dayCode: string;
   todos?: TodoOfDay;
   numberOfTaskdisplaying?: number;
+  today: boolean;
 };
 
 const DayCell: FC<DayCellProps> = ({
   dayCode,
   todos,
   numberOfTaskdisplaying = 3,
+  today,
 }) => {
   const dispatch = useDispatch();
   const { day, unixTime } = useMemo(() => {
@@ -78,7 +81,7 @@ const DayCell: FC<DayCellProps> = ({
     >
       <div className="w-5 h-5">
         <div
-          className={`w-full h-full rounded-full flex justify-center items-center text-sm`}
+          className={cn("w-full h-full rounded-full flex justify-center items-center text-sm", today && "bg-green-200")}
         >
           {day}
         </div>

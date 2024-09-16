@@ -1,6 +1,5 @@
 "use client";
 
-import { selectNotDeletedTodos } from "@/redux/selector/todoSelector";
 import { State, Todo } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
@@ -9,6 +8,7 @@ import { useSelector } from "react-redux";
 import { Button } from "../ui/button";
 import TableSortedIcon from "./TableSortedIcon";
 import TodoTable from "./TodoTable";
+import { selectTodos } from "@/redux/selector/todoSelector";
 
 const TodoTableManager = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -17,7 +17,7 @@ const TodoTableManager = () => {
     setIsMounted(true);
   }, []);
 
-  const todos = useSelector(selectNotDeletedTodos);
+  const todos = useSelector(selectTodos);
   const order = useMemo(() => Object.values(State), []);
 
   const todoColumns: ColumnDef<Todo>[] = [
