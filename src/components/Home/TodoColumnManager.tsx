@@ -2,35 +2,37 @@
 
 import { TASK_STATE_OPTIONS } from "@/lib/const";
 import { TodoEditRequest } from "@/lib/validators/todo";
+import { selectTodoByState } from "@/redux/selector/todoSelector";
+import { Todo } from "@prisma/client";
 import axios, { AxiosError } from "axios";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { FC } from "react";
 import { useMutation } from "react-query";
+import { useSelector } from "react-redux";
 import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
 import { useToast } from "../ui/use-toast";
-import { Todo } from "@prisma/client";
+import { useTypedDispatch } from "@/redux/store";
+import todoEditRequest from "@/requests/todoEditRequest";
+import { initiateTodos } from "@/redux/actions/todoAction";
 
 const TodoColumn = dynamic(() => import("./TodoColumn"), {
   ssr: false,
 });
 
-type TodoColumnManagerProp = {
-  todos: Record<Todo["state"], Todo[]>;
-};
-
-const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
+const TodoColumnManager = () => {
+  const todoByState = useSelector(selectTodoByState);
   const router = useRouter();
   const { axiosToast } = useToast();
+  const dispatch = useTypedDispatch();
 
   const { mutate: handleUpdateState } = useMutation({
     mutationFn: async ({ id, state, order }: TodoEditRequest) => {
-      const result = await axios.patch("/api/todo/edit", { id, state, order });
-      return result;
+      const data = await todoEditRequest({ id, state, order });
+      dispatch(initiateTodos(data));
+      return data;
     },
     onSuccess: () => {
       router.push("/");
-      router.refresh();
     },
     onError: (error: AxiosError) => {
       axiosToast(error);
@@ -58,7 +60,7 @@ const TodoColumnManager: FC<TodoColumnManagerProp> = ({ todos }) => {
             <TodoColumn
               key={value}
               title={title}
-              todos={todos[value] ?? []}
+              todos={todoByState[value] ?? []}
               state={value}
             />
           );

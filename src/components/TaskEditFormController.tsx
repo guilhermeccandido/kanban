@@ -15,6 +15,8 @@ import "react-quill/dist/quill.snow.css";
 import TaskModificationForm from "./TaskModificationForm";
 import { useToast } from "./ui/use-toast";
 import { Todo } from "@prisma/client";
+import { useTypedDispatch } from "@/redux/store";
+import { initiateTodos } from "@/redux/actions/todoAction";
 
 type TaskEditFormProps = {
   handleOnSuccess: () => void;
@@ -27,6 +29,7 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
   handleOnClose,
   task,
 }) => {
+  const dispatch = useTypedDispatch();
   const { axiosToast } = useToast();
   const form = useForm<TodoEditRequest>({
     resolver: zodResolver(TodoEditValidator),
@@ -44,7 +47,7 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
       dangerPeriod,
       label,
     }: TodoEditRequest) => {
-      return todoEditRequest({
+      const data = await todoEditRequest({
         id: task.id,
         title,
         description,
@@ -53,6 +56,9 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
         dangerPeriod,
         label,
       });
+
+      dispatch(initiateTodos(data));
+      return data;
     },
     onError: (error: AxiosError) => {
       axiosToast(error);
@@ -64,12 +70,17 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
 
   const deleteMutation = useMutation({
     mutationFn: async ({ id }: TodoDeleteRequest) => {
-      const result = await axios.delete("/api/todo/delete", {
-        data: {
-          id,
+      const { data }: { data: Todo[] } = await axios.delete(
+        "/api/todo/delete",
+        {
+          data: {
+            id,
+          },
         },
-      });
-      return result.data;
+      );
+
+      dispatch(initiateTodos(data));
+      return data;
     },
     onError: (error: AxiosError) => {
       axiosToast(error);

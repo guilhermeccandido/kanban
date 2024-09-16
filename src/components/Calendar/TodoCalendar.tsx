@@ -13,10 +13,9 @@ import {
 } from "react";
 import DayCell from "./DayCell";
 import { Todo } from "@prisma/client";
-
-type TodoCalendarProps = {
-  todos: Todo[];
-};
+import { useSelector } from "react-redux";
+import { ReduxState } from "@/redux/store";
+import { selectNotDeletedTodos } from "@/redux/selector/todoSelector";
 
 export type TodoOfDay = {
   deadline: Todo[];
@@ -29,7 +28,8 @@ type TodoHashmap = {
 
 const HEIGHT_OF_CELL_TASK = 26;
 
-const TodoCalendar: FC<TodoCalendarProps> = ({ todos }) => {
+const TodoCalendar = () => {
+  const todos = useSelector(selectNotDeletedTodos);
   const MAX_CELL_FOR_FIVE_ROW = 35;
   const MAX_CELL_FOR_SIX_ROW = 42;
   const [currentMonth, setCurrentMonth] = useState(dayjs().month() + 1);

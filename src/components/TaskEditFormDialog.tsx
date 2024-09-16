@@ -38,7 +38,6 @@ const TaskEditFormDialog: FC = () => {
   const handleOnSuccess = () => {
     onClose();
     router.push(caller);
-    router.refresh();
   };
 
   if (!task) return null;

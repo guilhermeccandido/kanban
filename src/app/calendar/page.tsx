@@ -1,35 +1,15 @@
 import CalendarTaskCreator from "@/components/Calendar/CalendarTaskCreator";
 import TodoCalendar from "@/components/Calendar/TodoCalendar";
 import SideNavOpener from "@/components/SideNavOpener";
+import TodoWrapper from "@/components/TodoWrapper";
 import { getAuthSession } from "@/lib/nextAuthOptions";
+import { todoFetchRequest } from "@/requests/todoFetchRequest";
 import { Todo } from "@prisma/client";
 import { HomeIcon } from "lucide-react";
 
 const Calendar = async () => {
   const session = await getAuthSession();
-  let todos: Todo[] = [];
-  if (session?.user) {
-    const { user } = session;
-    const result = await prisma.todo.findMany({
-      where: {
-        ownerId: user.id,
-        isDeleted: false,
-      },
-      select: {
-        id: true,
-        title: true,
-        state: true,
-        deadline: true,
-        description: true,
-        order: true,
-        label: true,
-      },
-      orderBy: {
-        order: "asc",
-      },
-    });
-    todos = JSON.parse(JSON.stringify(result));
-  }
+  const todos = await todoFetchRequest(session);
 
   return (
     <div className="h-[92.5%] sm:h-[95%] flex flex-col">
@@ -40,7 +20,9 @@ const Calendar = async () => {
         </div>
         <CalendarTaskCreator />
       </div>
-      <TodoCalendar todos={todos} />
+      <TodoWrapper todos={todos}>
+        <TodoCalendar />
+      </TodoWrapper>
     </div>
   );
 };

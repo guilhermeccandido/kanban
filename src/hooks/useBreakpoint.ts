@@ -81,7 +81,7 @@ const useBreakpoint = () => {
       forceUpdate();
     });
     return () => observer.unsubscribe(uid);
-  }, []);
+  }, [forceUpdate, observer]);
 
   return screenRef.current;
 };

@@ -1,7 +1,8 @@
 "use client";
 
+import { TASK_STATE_OPTIONS } from "@/lib/const";
 import { TodoCreateRequest, TodoCreateValidator } from "@/lib/validators/todo";
-import { TaskCreatorDefaultValues } from "@/redux/actions/todoAction";
+import { TaskCreatorDefaultValues } from "@/redux/actions/todoEditorAction";
 import todoCreateRequest from "@/requests/todoCreateRequest";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
@@ -11,7 +12,8 @@ import { useMutation } from "react-query";
 import "react-quill/dist/quill.snow.css";
 import TaskModificationForm from "./TaskModificationForm";
 import { useToast } from "./ui/use-toast";
-import { TASK_STATE_OPTIONS } from "@/lib/const";
+import { useTypedDispatch } from "@/redux/store";
+import { addTodo } from "@/redux/actions/todoAction";
 
 type TaskCreateFormProps = {
   handleOnSuccess: () => void;
@@ -24,6 +26,7 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
   handleOnClose,
   task,
 }) => {
+  const dispatch = useTypedDispatch();
   const { axiosToast } = useToast();
   const form = useForm<TodoCreateRequest>({
     resolver: zodResolver(TodoCreateValidator),
@@ -42,7 +45,7 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
       dangerPeriod,
       label,
     }: TodoCreateRequest) => {
-      const result = todoCreateRequest({
+      const data = await todoCreateRequest({
         title,
         description,
         state,
@@ -50,7 +53,8 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
         dangerPeriod,
         label,
       });
-      return result;
+      dispatch(addTodo(data));
+      return data;
     },
     onError: (error: AxiosError) => {
       axiosToast(error);

@@ -50,6 +50,7 @@
     "react-redux": "^8.1.2",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
+    "reselect": "^5.1.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
@@ -69,6 +70,6 @@
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.0",
     "tsx": "^4.16.2",
-    "typescript": "^5.3.3"
+    "typescript": "5.3.x"
   }
 }

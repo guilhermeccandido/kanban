@@ -1,16 +1,17 @@
 import { getAuthSession } from "@/lib/nextAuthOptions";
 import prisma from "@/lib/prismadb";
 import { getLogger } from "@/logger";
+import { Todo } from "@prisma/client";
 
 export async function GET(req) {
-  const logger = getLogger('info');
+  const logger = getLogger("info");
   try {
     const session = await getAuthSession();
 
     if (!session || !session?.user)
       return new Response("Unauthorized", { status: 401 });
 
-    const todos = await prisma.todo.findMany({
+    const todos: Pick<Todo, "label">[] = await prisma.todo.findMany({
       where: {
         ownerId: session!.user!.id,
       },

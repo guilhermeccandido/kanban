@@ -1,7 +1,7 @@
 import { composeWithDevTools } from "@redux-devtools/extension";
 import {
   combineReducers,
-  createStore,
+  legacy_createStore as createStore,
   applyMiddleware,
   AnyAction,
   Store,
@@ -10,14 +10,16 @@ import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import app from "@/redux/reducers/appReducer";
 import editTodo from "@/redux/reducers/todoEditorReducer";
+import todo from "@/redux/reducers/todoReducer";
 import { createWrapper } from "next-redux-wrapper";
 
 const rootReducer = combineReducers({
   app,
   editTodo,
+  todo,
 });
 
-const store = createStore(
+export const store = createStore(
   rootReducer,
   composeWithDevTools(applyMiddleware(thunk)),
 );

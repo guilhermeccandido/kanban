@@ -36,6 +36,9 @@ export async function PATCH(req) {
     const isOrderModified =
       typeof order !== "undefined" &&
       (record.order !== order || record.state !== state);
+    const changedState = record.state !== state;
+    const isOrderIncreased = record.order < order;
+
     if (!isOrderModified) {
       await prisma.todo.update({
         where: { id },
@@ -48,12 +51,7 @@ export async function PATCH(req) {
           label,
         },
       });
-
-      return new Response("OK", { status: 200 });
-    }
-
-    const changedState = record.state !== state;
-    if (changedState) {
+    } else if (changedState) {
       await prisma.todo.updateMany({
         where: {
           ownerId: session!.user!.id,
@@ -92,12 +90,7 @@ export async function PATCH(req) {
           order,
         },
       });
-
-      return new Response("OK", { status: 200 });
-    }
-
-    const isOrderIncreased = record.order < order;
-    if (isOrderIncreased) {
+    } else if (isOrderIncreased) {
       await prisma.todo.updateMany({
         where: {
           ownerId: session!.user!.id,
@@ -123,37 +116,44 @@ export async function PATCH(req) {
           order,
         },
       });
+    } else {
+      await prisma.todo.updateMany({
+        where: {
+          ownerId: session!.user!.id,
+          state,
+          order: { lt: record.order, gte: order },
+        },
+        data: {
+          order: {
+            increment: 1,
+          },
+        },
+      });
 
-      return new Response("OK", { status: 200 });
+      await prisma.todo.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          state,
+          deadline,
+          dangerPeriod,
+          label,
+          order,
+        },
+      });
     }
 
-    await prisma.todo.updateMany({
+    const result = await prisma.todo.findMany({
       where: {
         ownerId: session!.user!.id,
-        state,
-        order: { lt: record.order, gte: order },
       },
-      data: {
-        order: {
-          increment: 1,
-        },
+      orderBy: {
+        order: "asc",
       },
     });
 
-    await prisma.todo.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        state,
-        deadline,
-        dangerPeriod,
-        label,
-        order,
-      },
-    });
-
-    return new Response("OK", { status: 200 });
+    return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
     logger.error(error);
     return new Response("Internal Server Error", { status: 500 });

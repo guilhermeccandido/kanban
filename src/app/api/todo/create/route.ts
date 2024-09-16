@@ -52,7 +52,7 @@ export async function POST(req) {
       },
     });
 
-    return new Response("OK", { status: 200 });
+    return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
     logger.error(error);
     return new Response("Internal Server Error", { status: 500 });

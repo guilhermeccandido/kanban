@@ -44,7 +44,16 @@ export async function DELETE(req: NextRequest) {
       },
     });
 
-    return new Response("OK", { status: 200 });
+    const result = await prisma.todo.findMany({
+      where: {
+        ownerId: session.user.id,
+      },
+      orderBy: {
+        order: "asc",
+      },
+    });
+
+    return new Response(JSON.stringify(result), { status: 200 });
   } catch (error) {
     logger.error(error);
     return new Response("Internal Server Error", { status: 500 });
