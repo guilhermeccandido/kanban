@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { openTodoEditor } from "@/redux/actions/todoAction";
+import { openTodoEditor } from "@/redux/actions/todoEditorAction";
 import { Todo } from "@prisma/client";
 import { FC, HTMLProps, MouseEvent, useCallback } from "react";
 import { useDispatch } from "react-redux";
