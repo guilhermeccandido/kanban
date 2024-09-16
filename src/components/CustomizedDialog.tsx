@@ -1,7 +1,8 @@
 import useBreakpoint from "@/hooks/useBreakpoint";
 import useClickOutSide from "@/hooks/useClickOutSide";
+import useEsc from "@/hooks/useEsc";
 import clsx from "clsx";
-import { FC, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 
 type CustomizedDialogProps = {
   children?: JSX.Element;
@@ -18,6 +19,7 @@ const CustomizedDialog: FC<CustomizedDialogProps> = ({
   const { md } = useBreakpoint();
 
   useClickOutSide(dialogRef, onClose);
+  useEsc(onClose);
 
   if (!open) return null;
 

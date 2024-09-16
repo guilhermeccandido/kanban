@@ -1,5 +1,6 @@
 import useBackupState from "@/hooks/useBackupState";
 import useClickOutSide from "@/hooks/useClickOutSide";
+import useEsc from "@/hooks/useEsc";
 import { cn } from "@/lib/utils";
 import { CircleX, X } from "lucide-react";
 import {
@@ -48,6 +49,7 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
     setIsNewLabel(false);
   }, [resetOptions]);
   useClickOutSide(selectorRef, handleOnClose);
+  useEsc(handleOnClose)
 
   useEffect(() => {
     if (!lazyFetch) return;

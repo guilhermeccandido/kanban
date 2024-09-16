@@ -1,4 +1,5 @@
 import useClickOutSide from "@/hooks/useClickOutSide";
+import useEsc from "@/hooks/useEsc";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
@@ -37,6 +38,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
     setOpen(false);
   }, []);
   useClickOutSide(selectorWrapperRef, handleOnClose);
+  useEsc(handleOnClose);
 
   const handleOpen = () => {
     setOpen((prev) => !prev);
