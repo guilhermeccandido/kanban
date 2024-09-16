@@ -1,14 +1,19 @@
 "use client";
 
+import { openTodoEditor } from "@/redux/actions/todoEditorAction";
 import { Plus } from "lucide-react";
+import { FC } from "react";
 import { useDispatch } from "react-redux";
-import { openTodoEditor } from "@/redux/actions/todoAction";
 
-const CalendarTaskCreator = () => {
+type HeaderTaskCreatorProps = {
+  caller: string;
+};
+
+const HeaderTaskCreator: FC<HeaderTaskCreatorProps> = ({ caller }) => {
   const dispatch = useDispatch();
 
   const handleOpenDialog = () => {
-    dispatch(openTodoEditor({}, "/calendar", "create"));
+    dispatch(openTodoEditor({}, caller, "create"));
   };
 
   return (
@@ -21,4 +26,4 @@ const CalendarTaskCreator = () => {
   );
 };
 
-export default CalendarTaskCreator;
+export default HeaderTaskCreator;

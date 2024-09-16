@@ -18,7 +18,6 @@ export const selectTodoByState = createSelector(
         } else {
           acc[todo.state] = [todo];
         }
-        console.log(acc);
         return acc;
       },
       {} as Record<Todo["state"], Todo[]>,

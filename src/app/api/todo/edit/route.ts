@@ -37,7 +37,7 @@ export async function PATCH(req) {
       typeof order !== "undefined" &&
       (record.order !== order || record.state !== state);
     const changedState = record.state !== state;
-    const isOrderIncreased = record.order < order;
+    const isOrderIncreased = order && record.order < order;
 
     if (!isOrderModified) {
       await prisma.todo.update({

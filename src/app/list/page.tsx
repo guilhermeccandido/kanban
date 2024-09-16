@@ -1,21 +1,21 @@
 import AppSubHeader from "@/components/AppSubHeader";
-import TodoCalendar from "@/components/Calendar/TodoCalendar";
+import TodoTableManager from "@/components/List/TodaTableManager";
 import TodoWrapper from "@/components/TodoWrapper";
 import { getAuthSession } from "@/lib/nextAuthOptions";
 import { todoFetchRequest } from "@/requests/todoFetchRequest";
 
-const Calendar = async () => {
+const List = async () => {
   const session = await getAuthSession();
   const todos = await todoFetchRequest(session);
 
   return (
     <div className="h-[92.5%] sm:h-[95%] flex flex-col">
-      <AppSubHeader title="Calendar" link="calendar" />
+      <AppSubHeader title="List" link="/list" />
       <TodoWrapper todos={todos}>
-        <TodoCalendar />
+        <TodoTableManager />
       </TodoWrapper>
     </div>
   );
 };
 
-export default Calendar;
+export default List;

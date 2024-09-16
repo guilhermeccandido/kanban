@@ -4,7 +4,7 @@ import useClickOutSide from "@/hooks/useClickOutSide";
 import useResize from "@/hooks/useResize";
 import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
-import { Calendar, Dumbbell, List, Menu } from "lucide-react";
+import { Calendar, Dumbbell, List, ListIcon, Menu } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +25,11 @@ const NAV_CONTENT: NavContent[] = [
     title: "Calendar",
     icon: <Calendar />,
     link: "/calendar",
+  },
+  {
+    title: "List",
+    icon: <ListIcon />,
+    link: "list",
   },
 ];
 
