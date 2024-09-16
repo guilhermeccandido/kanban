@@ -1,5 +1,4 @@
 import { Todo } from "@prisma/client";
-import { HYDRATE } from "next-redux-wrapper";
 import { AnyAction } from "redux";
 import { TodoAction, todoActionTypes } from "../actions/todoAction";
 
@@ -18,9 +17,6 @@ const todoReducer = (
   action: TodoAction | AnyAction,
 ): TodoState => {
   switch (action.type) {
-    case HYDRATE:
-      console.log("HYDRATE", action);
-      return { ...state, ...action.payload };
     case todoActionTypes.INITIATE_TODOS:
       return { ...state, fetched: true, todos: action.payload };
     case todoActionTypes.ADD_TODO:
