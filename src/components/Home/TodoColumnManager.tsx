@@ -13,7 +13,7 @@ import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
 import { useToast } from "../ui/use-toast";
 import { useTypedDispatch } from "@/redux/store";
 import todoEditRequest from "@/requests/todoEditRequest";
-import { initiateTodos } from "@/redux/actions/todoAction";
+import { dndTodo, initiateTodos } from "@/redux/actions/todoAction";
 
 const TodoColumn = dynamic(() => import("./TodoColumn"), {
   ssr: false,
@@ -49,7 +49,8 @@ const TodoColumnManager = () => {
       order,
     };
 
-    handleUpdateState(payload);
+    // handleUpdateState(payload);
+    dispatch(dndTodo(payload));
   };
 
   return (
