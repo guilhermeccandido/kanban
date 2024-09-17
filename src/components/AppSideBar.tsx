@@ -8,7 +8,6 @@ import { ReduxState } from "@/redux/store";
 import { Calendar, Columns3, ListIcon, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
 import { useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -55,7 +54,7 @@ const AppSideBar = () => {
 
   const content = useMemo(() => {
     return (
-      <>
+      <div className="flex flex-col gap-1">
         {NAV_CONTENT.map((content, index) => {
           return (
             <div
@@ -79,7 +78,7 @@ const AppSideBar = () => {
             </div>
           );
         })}
-      </>
+      </div>
     );
   }, [handleCloseDrawer, currentPath]);
 
@@ -92,22 +91,23 @@ const AppSideBar = () => {
         className="absolute top-0 left-0 container bg-white w-72 h-full mx-0 opacity-100 z-20"
         ref={drawerRef}
       >
-        <div className="pt-12 pb-5">
+        <div className="pt-[3.25rem] pb-5">
           <div className="w-6 h-6 cursor-pointer">
             <Menu onClick={handleCloseDrawer} />
           </div>
         </div>
+
         {content}
       </div>
     </>
   ) : (
     <div className="container pt-12 bg-white w-72 h-full mx-0 z-20 min-w-[260px] max-w-[260px]">
-      <div className="pb-5">
+      <div className="pb-5 pt-1">
         <div className="w-6 h-6 cursor-pointer">
           <Menu onClick={handleCloseDrawer} />
         </div>
       </div>
-      <div className="flex flex-col gap-1">{content}</div>
+      {content}
     </div>
   );
 };

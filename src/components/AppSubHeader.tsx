@@ -10,7 +10,7 @@ type AppSubHeaderProps = {
 
 const AppSubHeader: FC<AppSubHeaderProps> = ({ title, link }) => {
   return (
-    <div className="flex items-center pb-4 sm:pb-8 justify-between flex-none">
+    <div className="flex items-center pb-4 justify-between flex-none">
       <div className="flex">
         <SideNavOpener pageIcon={<HomeIcon />} />
         <div className="pl-3 text-base">{title}</div>
