@@ -42,7 +42,6 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
       description,
       state,
       deadline,
-      dangerPeriod,
       label,
     }: TodoCreateRequest) => {
       const data = await todoCreateRequest({
@@ -50,7 +49,6 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
         description,
         state,
         deadline,
-        dangerPeriod,
         label,
       });
       dispatch(addTodo(data));

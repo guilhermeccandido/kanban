@@ -1,14 +1,16 @@
 import useBackupState from "@/hooks/useBackupState";
 import useClickOutSide from "@/hooks/useClickOutSide";
 import useEsc from "@/hooks/useEsc";
+import { throttle } from "@/lib/helper";
 import { cn } from "@/lib/utils";
-import { CircleX, X } from "lucide-react";
+import { Check, CircleX, X } from "lucide-react";
 import {
   FC,
   KeyboardEvent,
   KeyboardEventHandler,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -39,6 +41,7 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   const [isNewLabel, setIsNewLabel] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState<string>("");
+  const [fetched, setFetched] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -49,18 +52,24 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
     setIsNewLabel(false);
   }, [resetOptions]);
   useClickOutSide(selectorRef, handleOnClose);
-  useEsc(handleOnClose)
+  useEsc(handleOnClose);
+
+  const throttledFetchLabels = useMemo(
+    () =>
+      throttle(async () => {
+        if (!lazyFetch) return;
+        const data = await lazyFetch();
+        setPrivateOptionsBackup(data ?? []);
+      }, 500),
+    [lazyFetch, setPrivateOptionsBackup],
+  );
 
   useEffect(() => {
-    if (!lazyFetch) return;
-    lazyFetch()
-      .then((data) => {
-        setPrivateOptionsBackup(data);
-      })
-      .catch((error) => {
-        setPrivateOptionsBackup([]);
-      });
-  }, [lazyFetch, setPrivateOptionsBackup]);
+    if (open && lazyFetch && !fetched) {
+      throttledFetchLabels();
+      setFetched(true);
+    }
+  }, [open, lazyFetch, fetched, throttledFetchLabels]);
 
   useEffect(() => {
     if (!open || !searchRef.current) return;
@@ -211,10 +220,16 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
             )}
           </div>
           <div>
-            <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
+            {fetched || !open ? (
+              <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
+            ) : (
+              <div className="w-4 h-4 ml-1 flex justify-center items-center">
+                <div className="w-4 h-4 border-2 border-t-zinc-500 border-solid rounded-full animate-spin" />
+              </div>
+            )}
           </div>
         </div>
-        {open && privateOptions.length > 0 && (
+        {open && privateOptions?.length > 0 && (
           <div className="absolute bg-white my-1 w-full border rounder-md z-50">
             {privateOptions.map((option) => (
               <div
@@ -225,7 +240,12 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
                 )}
                 onClick={() => onSelect(option)}
               >
-                <div className="break-words">{option}</div>{" "}
+                <div className="break-words">
+                  {option}
+                  {privateValue.includes(option) && (
+                    <Check className="w-4 h-4 inline-block ml-2" />
+                  )}
+                </div>{" "}
                 <span>
                   {isNewLabel && (
                     <span className="text-muted-foreground">(new label)</span>

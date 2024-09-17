@@ -2,6 +2,7 @@
 
 import useBreakpoint from "@/hooks/useBreakpoint";
 import { TASK_STATE_OPTIONS } from "@/lib/const";
+import { throttle } from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { Todo } from "@prisma/client";
 import {
@@ -12,7 +13,7 @@ import {
 import axios, { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { CalendarIcon, X } from "lucide-react";
-import { FC, lazy, useCallback } from "react";
+import { FC, lazy, useCallback, useMemo } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { UseMutationResult } from "react-query";
 import "react-quill/dist/quill.snow.css";
@@ -20,12 +21,7 @@ import CustomizedMultSelect from "./CustomizedMultSelect";
 import CustomizedSelect from "./CustomizedSelect";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useToast } from "./ui/use-toast";
@@ -148,18 +144,6 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
         </div>
         <div className="relative grid gap-1 pb-4">
           <Label className="text-xl" htmlFor="state">
-            Danger Period
-          </Label>
-          <Input
-            id="dangerPeriod"
-            className="w-full"
-            type="number"
-            {...register("dangerPeriod")}
-          />
-          <ErrorMessage msg={errors.dangerPeriod?.message?.toString()} />
-        </div>
-        <div className="relative grid gap-1 pb-4">
-          <Label className="text-xl" htmlFor="state">
             Label
           </Label>
           <Controller
@@ -248,18 +232,6 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
             )}
           </div>
         </CardContent>
-        {/* <CardFooter className="gap-2"> */}
-        {/*   <Button isLoading={isLoading}>Edit Task</Button> */}
-        {/*   {enableDelete && ( */}
-        {/*     <Button */}
-        {/*       variant="outline" */}
-        {/*       onClick={() => deleteFunc({ id: task.id })} */}
-        {/*       isLoading={deleteTaskIsLoading} */}
-        {/*     > */}
-        {/*       Delete Task */}
-        {/*     </Button> */}
-        {/*   )} */}
-        {/* </CardFooter> */}
       </Card>
     </form>
   );

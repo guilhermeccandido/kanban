@@ -6,10 +6,6 @@ export const TodoCreateValidator = z.object({
   description: z.string().max(1000).optional(),
   state: z.nativeEnum(State),
   deadline: z.number().int().positive().optional(),
-  dangerPeriod: z.preprocess(
-    (value) => (!value ? undefined : parseInt(value as string, 10)),
-    z.number().int().nonnegative().optional(),
-  ),
   label: z.array(z.string().max(100)).optional(),
 });
 
@@ -19,10 +15,6 @@ export const TodoEditValidator = z.object({
   description: z.string().max(1000).nullable().optional(),
   state: z.nativeEnum(State).optional(),
   deadline: z.number().int().positive().nullable().optional(),
-  dangerPeriod: z.preprocess(
-    (value) => (!value ? undefined : parseInt(value as string, 10)),
-    z.number().int().nonnegative().nullable().optional(),
-  ),
   label: z.array(z.string().max(100)).optional(),
   order: z.number().int().min(0).optional(),
 });

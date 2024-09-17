@@ -1,14 +1,13 @@
 "use client";
 
 import useResize from "@/hooks/useResize";
+import { selectTodos } from "@/redux/selector/todoSelector";
 import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import DayCell from "./DayCell";
-import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
-import { selectTodos } from "@/redux/selector/todoSelector";
 
 const HEIGHT_OF_CELL_TASK = 26;
 const MAX_CELL_FOR_FIVE_ROW = 35;
@@ -189,46 +188,31 @@ const TodoCalendar: FC = () => {
     ));
   }, [currentMonth, currentYear, todoHashmap, numberOfTaskdisplaying]);
 
-  const handleDragEnd = (dragEndEvent: OnDragEndEvent) => {
-    const { over, from, item, order } = dragEndEvent;
-    if (!over || !from || !item) return;
-
-    const payload = {
-      state: over as Todo["deadline"],
-      id: item as string,
-      order,
-    };
-
-    console.log(payload);
-  };
-
   return (
-    <DndContextProvider>
-      <div className="flex flex-col gap-2 flex-auto">
-        <div className="flex justify-between items-center flex-none">
-          <button onClick={() => handleChangeMonth(false)}>
-            <ChevronLeft size={20} />
-          </button>
-          <span className="text-lg font-semibold">
-            {dayjs()
-              .month(currentMonth - 1)
-              .format("MMMM")}{" "}
-            {currentYear}
-          </span>
-          <button onClick={() => handleChangeMonth(true)}>
-            <ChevronRight size={20} />
-          </button>
-        </div>
-        <div className="flex flex-col gap-2 flex-auto border-zinc-300 border-l border-t">
-          <div className="w-full flex flex-col h-full">
-            <div className="flex justify-around">{renderWeekdayHeaders}</div>
-            <div className="flex flex-col flex-1" ref={calendarRef}>
-              {renderCalendarDays}
-            </div>
+    <div className="flex flex-col gap-2 flex-auto">
+      <div className="flex justify-between items-center flex-none">
+        <button onClick={() => handleChangeMonth(false)}>
+          <ChevronLeft size={20} />
+        </button>
+        <span className="text-lg font-semibold">
+          {dayjs()
+            .month(currentMonth - 1)
+            .format("MMMM")}{" "}
+          {currentYear}
+        </span>
+        <button onClick={() => handleChangeMonth(true)}>
+          <ChevronRight size={20} />
+        </button>
+      </div>
+      <div className="flex flex-col gap-2 flex-auto border-zinc-300 border-l border-t">
+        <div className="w-full flex flex-col h-full">
+          <div className="flex justify-around">{renderWeekdayHeaders}</div>
+          <div className="flex flex-col flex-1" ref={calendarRef}>
+            {renderCalendarDays}
           </div>
         </div>
       </div>
-    </DndContextProvider>
+    </div>
   );
 };
 

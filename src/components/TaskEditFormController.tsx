@@ -44,7 +44,6 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
       description,
       state,
       deadline,
-      dangerPeriod,
       label,
     }: TodoEditRequest) => {
       const data = await todoEditRequest({
@@ -53,7 +52,6 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
         description,
         state,
         deadline,
-        dangerPeriod,
         label,
       });
 

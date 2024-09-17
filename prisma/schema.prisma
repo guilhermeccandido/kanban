@@ -14,7 +14,6 @@ model Todo {
   state        State 
   label        String[] @default([])
   deadline     Int?
-  dangerPeriod Int?
   isDeleted    Boolean  @default(false)
   order        Int
 
