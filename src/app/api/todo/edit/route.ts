@@ -13,16 +13,8 @@ export async function PATCH(req) {
 
     const body = await req.json();
 
-    const {
-      id,
-      title,
-      description,
-      deadline,
-      dangerPeriod = 0,
-      label,
-      order,
-      state,
-    } = TodoEditValidator.parse(body);
+    const { id, title, description, deadline, label, order, state } =
+      TodoEditValidator.parse(body);
 
     const [record] = await prisma.todo.findMany({
       where: {
@@ -47,7 +39,6 @@ export async function PATCH(req) {
           description,
           state,
           deadline,
-          dangerPeriod,
           label,
         },
       });
@@ -85,7 +76,6 @@ export async function PATCH(req) {
           description,
           state,
           deadline,
-          dangerPeriod,
           label,
           order,
         },
@@ -111,7 +101,6 @@ export async function PATCH(req) {
           description,
           state,
           deadline,
-          dangerPeriod,
           label,
           order,
         },
@@ -137,7 +126,6 @@ export async function PATCH(req) {
           description,
           state,
           deadline,
-          dangerPeriod,
           label,
           order,
         },
@@ -147,6 +135,7 @@ export async function PATCH(req) {
     const result = await prisma.todo.findMany({
       where: {
         ownerId: session!.user!.id,
+        isDeleted: false,
       },
       orderBy: {
         order: "asc",

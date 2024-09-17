@@ -47,6 +47,7 @@ export async function DELETE(req: NextRequest) {
     const result = await prisma.todo.findMany({
       where: {
         ownerId: session.user.id,
+        isDeleted: false,
       },
       orderBy: {
         order: "asc",

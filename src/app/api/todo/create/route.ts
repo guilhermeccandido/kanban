@@ -17,7 +17,6 @@ export async function POST(req) {
       description = "",
       state,
       deadline,
-      dangerPeriod = 0,
       label,
     } = TodoCreateValidator.parse(body);
 
@@ -42,7 +41,6 @@ export async function POST(req) {
         state,
         label,
         deadline,
-        dangerPeriod,
         order,
         owner: {
           connect: {
