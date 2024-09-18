@@ -60,6 +60,7 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
         if (!lazyFetch) return;
         const data = await lazyFetch();
         setPrivateOptionsBackup(data ?? []);
+        setFetched(true);
       }, 500),
     [lazyFetch, setPrivateOptionsBackup],
   );
@@ -67,7 +68,6 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   useEffect(() => {
     if (open && lazyFetch && !fetched) {
       throttledFetchLabels();
-      setFetched(true);
     }
   }, [open, lazyFetch, fetched, throttledFetchLabels]);
 
@@ -220,12 +220,12 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
             )}
           </div>
           <div>
-            {fetched || !open ? (
-              <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
-            ) : (
+            {!fetched && open ? (
               <div className="w-4 h-4 ml-1 flex justify-center items-center">
                 <div className="w-4 h-4 border-2 border-t-zinc-500 border-solid rounded-full animate-spin" />
               </div>
+            ) : (
+              <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
             )}
           </div>
         </div>

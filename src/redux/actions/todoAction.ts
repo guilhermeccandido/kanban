@@ -128,8 +128,7 @@ export const dndTodo = ({
     }
 
     try {
-      const data = await todoEditRequest({ id, state, order });
-      dispatch(initiateTodos(data));
+      await todoEditRequest({ id, state, order });
     } catch (error) {
       dispatch(initiateTodos(todos));
       throw error;

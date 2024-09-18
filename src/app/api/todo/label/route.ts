@@ -14,6 +14,7 @@ export async function GET(req) {
     const todos: Pick<Todo, "label">[] = await prisma.todo.findMany({
       where: {
         ownerId: session!.user!.id,
+        isDeleted: false,
       },
       select: {
         label: true,
