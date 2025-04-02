@@ -1,7 +1,6 @@
 "use client";
 
 import AppLayout from "@/components/AppLayout";
-import AppSubHeader from "@/components/AppSubHeader";
 import TodoColumnManager from "@/components/Home/TodoColumnManager";
 import TodoWrapper from "@/components/TodoWrapper";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,6 @@ const Home = () => {
       }
     >
       <div className="h-full flex flex-col">
-        <AppSubHeader title="Board" link="/" />
         <div className="h-[90%] flex-auto">
           <TodoWrapper todos={[]}>
             <TodoColumnManager />

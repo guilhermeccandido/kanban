@@ -3,7 +3,6 @@
 import useClickOutSide from "@/hooks/useClickOutSide";
 import useResize from "@/hooks/useResize";
 import { cn } from "@/lib/utils";
-import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
 import {
   BarChart2,
