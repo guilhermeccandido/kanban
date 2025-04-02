@@ -5,3 +5,16 @@
 .ql-editor ol {
   padding-left: 0.25rem;
 }
+
+/* add styling for dark mode */
+.dark .ql-snow {
+  border-color: hsl(var(--input));
+}
+
+.dark .ql-picker {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark .ql-snow .ql-stroke {
+  stroke: hsl(var(--muted-foreground));
+}
