@@ -1,20 +1,13 @@
-import prisma from "@/lib/prismadb";
-import { Session } from "next-auth";
+import { axiosInstance } from "@/lib/axios";
+import { Todo } from "@prisma/client";
 
-export const todoFetchRequest = async (session: Session | null) => {
-  if (!session?.user) {
-    return [];
+const todoFetchRequest = async () => {
+  try {
+    const result = await axiosInstance.get("/todo");
+    return result.data as Promise<Todo[]>;
+  } catch (error) {
+    throw error;
   }
-
-  const todos = await prisma.todo.findMany({
-    where: {
-      ownerId: session.user.id,
-      isDeleted: false,
-    },
-    orderBy: {
-      order: "asc",
-    },
-  });
-
-  return todos;
 };
+
+export default todoFetchRequest;

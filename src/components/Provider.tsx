@@ -11,7 +11,13 @@ type ProvidersProps = {
   children: React.ReactNode;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 export function Providers({ children }: ProvidersProps) {
   return (

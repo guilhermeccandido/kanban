@@ -1,30 +1,14 @@
 "use client";
 
-import useClickOutSide from "@/hooks/useClickOutSide";
-import useResize from "@/hooks/useResize";
 import { cn } from "@/lib/utils";
-import { ReduxState } from "@/redux/store";
-import {
-  BarChart2,
-  Calendar,
-  Clock,
-  Columns3,
-  ListIcon,
-  Menu,
-  Tag,
-} from "lucide-react";
+import { BarChart2, Clock, ListIcon, Menu, Tag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ForwardRefExoticComponent,
-  ForwardRefRenderFunction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ForwardRefExoticComponent, useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
+import { useQuery } from "react-query";
+import todoLabelFetchRequest from "@/requests/todoLabelFetchRequest";
+import { getLabelColor } from "@/lib/color";
 
 type NavContent = {
   title: string;
@@ -55,22 +39,26 @@ const NAV_CONTENT: NavContent[] = [
   },
 ];
 
-// Project items
-const projectItems = [
-  {
-    path: "/?filter=Self-Project",
-    label: "Self-Project",
-    color: "bg-blue-500",
-  },
-  { path: "/?filter=EasyBoard", label: "EasyBoard", color: "bg-purple-500" },
-  { path: "/?filter=KTodo", label: "KTodo", color: "bg-teal-500" },
-  { path: "/?filter=FYP", label: "FYP", color: "bg-red-500" },
-];
+// const projectItems = [
+//   {
+//     path: "/?filter=Self-Project",
+//     label: "Self-Project",
+//     color: "bg-blue-500",
+//   },
+//   { path: "/?filter=EasyBoard", label: "EasyBoard", color: "bg-purple-500" },
+//   { path: "/?filter=KTodo", label: "KTodo", color: "bg-teal-500" },
+//   { path: "/?filter=FYP", label: "FYP", color: "bg-red-500" },
+// ];
 
 const AppSideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  const { data: labels } = useQuery({
+    queryKey: ["labels"],
+    queryFn: todoLabelFetchRequest,
+  });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -164,16 +152,16 @@ const AppSideBar = () => {
               Projects
             </h3>
             <div className="space-y-1">
-              {projectItems.map((project) => (
-                <Link key={project.path} href={project.path} className="block">
+              {labels?.map((label) => (
+                <Link key={label} href={`/?filter=${label}`} className="block">
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <span
-                      className={`h-2 w-2 rounded-full ${project.color} mr-2`}
+                      className={`h-2 w-2 rounded-full ${getLabelColor(label).bg} mr-2`}
                     ></span>
-                    <span>{project.label}</span>
+                    <span>{label}</span>
                   </Button>
                 </Link>
               ))}

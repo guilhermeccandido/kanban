@@ -82,8 +82,11 @@ const useDroppable = ({ id }: UseDroppableArgs): UseDroppableReturn => {
       const element = document.createElement("div");
       element.id = HOVER_ITEM_ID;
       element.style.height = `${draggingNodeHeight.current}px`;
+      element.style.marginTop = `${draggingNodeMargin.current}px`;
+      element.style.marginBottom = `${draggingNodeMargin.current}px`;
       element.style.borderRadius = "4px";
-      element.style.backgroundColor = "#f1f1f1";
+      element.style.backgroundColor = "rgba(0, 0, 0, 0.2)";
+      element.className = "virtual-hover-element";
       parent.appendChild(element);
       hoveringElement.current = element;
     },

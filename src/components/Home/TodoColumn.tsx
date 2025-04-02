@@ -1,14 +1,17 @@
 "use client";
 
-import { FC } from "react";
-import HomeTaskCreator from "./HomeTaskCreator";
-import dynamic from "next/dynamic";
 import useDroppable from "@/hooks/useDroppable";
+import { COLUMN_COLORS } from "@/lib/const";
+import { cn } from "@/lib/utils";
+import { openTodoEditor } from "@/redux/actions/todoEditorAction";
 import { Todo } from "@prisma/client";
-
-const TodoCard = dynamic(() => import("@/components/Home/TodoCard"), {
-  ssr: false,
-});
+import { PlusCircle } from "lucide-react";
+import { FC } from "react";
+import { useDispatch } from "react-redux";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import HomeTaskCreator from "./HomeTaskCreator";
+import TodoCard from "./TodoCard";
 
 type TodoColumnProp = {
   title: string;
@@ -17,15 +20,53 @@ type TodoColumnProp = {
 };
 
 const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
+  const dispatch = useDispatch();
+
   const { setNodeRef } = useDroppable({ id: state });
 
+  const getColumnColor = (columnId: Todo["state"]) => {
+    return COLUMN_COLORS[columnId]?.bg || "bg-gray-50 dark:bg-gray-900";
+  };
+
+  const getColumnHeaderColor = (columnId: Todo["state"]) => {
+    return (
+      COLUMN_COLORS[columnId]?.header || "text-gray-500 dark:text-gray-400"
+    );
+  };
+
+  const handleOpenDialog = () => {
+    dispatch(openTodoEditor({ state }, "/", "create"));
+  };
+
   return (
-    <div className="bg-white h-full py-2 rounded-md flex flex-col shadow-lg max-w-[288px] min-w-[288px]">
-      <div className="text-center border-b border-zinc-100 py-1">{title}</div>
+    <div
+      className={cn(
+        "flex flex-col rounded-lg shadow-sm min-w-[280px] max-w-[280px] h-fit max-h-[calc(100vh-180px)]",
+        getColumnColor(state),
+      )}
+    >
       <div
-        className="flex-col flex-grow relative px-2 pt-1 overflow-auto"
-        ref={setNodeRef}
+        className={cn(
+          "p-3 font-medium rounded-t-lg flex items-center justify-between sticky top-0 z-10 text-card-foreground",
+          getColumnHeaderColor(state),
+        )}
       >
+        <div className="flex items-center">
+          <span>{title}</span>
+          <Badge className="ml-2 bg-white text-foreground dark:bg-gray-800">
+            {todos.length}
+          </Badge>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => handleOpenDialog()}
+        >
+          <PlusCircle className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="relative p-2 overflow-auto min-h-[50px]" ref={setNodeRef}>
         {todos
           ?.sort((a, b) => a.order - b.order)
           .map((todo) => {

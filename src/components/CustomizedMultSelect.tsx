@@ -1,7 +1,6 @@
 import useBackupState from "@/hooks/useBackupState";
 import useClickOutSide from "@/hooks/useClickOutSide";
 import useEsc from "@/hooks/useEsc";
-import { throttle } from "@/lib/helper";
 import { cn } from "@/lib/utils";
 import { Check, CircleX, X } from "lucide-react";
 import {
@@ -10,7 +9,6 @@ import {
   KeyboardEventHandler,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -20,7 +18,6 @@ type CustomizedMultSelectProps = {
   value?: string[];
   onChange?: (value: string[]) => void;
   placeholder?: string;
-  lazyFetch?: () => Promise<string[]>;
 };
 
 const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
@@ -28,7 +25,6 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   value = [],
   onChange,
   placeholder,
-  lazyFetch,
 }) => {
   const [privateValue, setPrivateValue] = useState<string[]>(value);
   const {
@@ -41,7 +37,6 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   const [isNewLabel, setIsNewLabel] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [fetched, setFetched] = useState(false);
   const selectorRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -53,23 +48,6 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
   }, [resetOptions]);
   useClickOutSide(selectorRef, handleOnClose);
   useEsc(handleOnClose);
-
-  const throttledFetchLabels = useMemo(
-    () =>
-      throttle(async () => {
-        if (!lazyFetch) return;
-        const data = await lazyFetch();
-        setPrivateOptionsBackup(data ?? []);
-        setFetched(true);
-      }, 500),
-    [lazyFetch, setPrivateOptionsBackup],
-  );
-
-  useEffect(() => {
-    if (open && lazyFetch && !fetched) {
-      throttledFetchLabels();
-    }
-  }, [open, lazyFetch, fetched, throttledFetchLabels]);
 
   useEffect(() => {
     if (!open || !searchRef.current) return;
@@ -185,14 +163,14 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
                 {privateValue.map((value) => (
                   <div
                     key={value}
-                    className="inline-flex bg-slate-200 max-w-[180px] m-[1px] items-center rounded-sm"
+                    className="inline-flex bg-slate-200 dark:bg-slate-800 max-w-[180px] m-[1px] items-center rounded-sm"
                   >
                     <div className="overflow-hidden text-ellipsis whitespace-nowrap px-2">
                       {value}
                     </div>
                     {open && (
                       <div
-                        className="w-5 h-5 cursor-pointer p-1 hover:bg-rose-300"
+                        className="w-5 h-5 cursor-pointer p-1 hover:bg-rose-300 dark:hover:bg-rose-600"
                         onClick={(e) => removeSelected(e, value)}
                       >
                         <X className="w-3 h-3" />
@@ -220,22 +198,16 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
             )}
           </div>
           <div>
-            {!fetched && open ? (
-              <div className="w-4 h-4 ml-1 flex justify-center items-center">
-                <div className="w-4 h-4 border-2 border-t-zinc-500 border-solid rounded-full animate-spin" />
-              </div>
-            ) : (
-              <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
-            )}
+            <CircleX className="w-4 h-4 ml-1" onClick={clearSelected} />
           </div>
         </div>
         {open && privateOptions?.length > 0 && (
-          <div className="absolute bg-white my-1 w-full border rounder-md z-50">
+          <div className="absolute bg-white dark:bg-gray-800 my-1 w-full border rounder-md z-50">
             {privateOptions.map((option) => (
               <div
                 key={option}
                 className={cn(
-                  "py-2 px-4 cursor-pointer hover:bg-gray-200",
+                  "py-2 px-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700",
                   privateValue.includes(option) && "bg-accent",
                 )}
                 onClick={() => onSelect(option)}

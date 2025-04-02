@@ -65,7 +65,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
 
   return (
     <div className="relative text-sm text-left" ref={selectorWrapperRef}>
-      <div className="w-full bg-background border rounded-lg" ref={selectorRef}>
+      <div className="w-full border rounded-lg" ref={selectorRef}>
         <div
           onClick={handleOpen}
           className="py-2 px-4 flex justify-between items-center cursor-pointer"
@@ -84,7 +84,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
       </div>
       {open && (
         <div
-          className="absolute bg-white my-1 w-full border rounded-md z-10"
+          className="absolute bg-white dark:bg-gray-900 my-1 w-full border rounded-md z-10"
           style={{ top: up ? `-${selectorHeight}px` : "" }}
         >
           {orderedOptions.map((option) => (
@@ -92,7 +92,7 @@ const CustomizedSelect: FC<CustomizedSelectProps> = ({
               key={option.value}
               onClick={() => handleOnSelect(option)}
               className={cn(
-                "py-2 px-4 flex justify-between items-center cursor-pointer",
+                "py-2 px-4 flex justify-between items-center cursor-pointer hover:bg-accent",
                 (value === option.value ||
                   privateValue?.value === option.value) &&
                   "bg-accent",

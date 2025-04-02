@@ -5,18 +5,18 @@ import {
   TodoEditRequest,
   TodoEditValidator,
 } from "@/lib/validators/todo";
+import { useTypedDispatch } from "@/redux/store";
 import todoEditRequest from "@/requests/todoEditRequest";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Todo } from "@prisma/client";
 import axios, { AxiosError } from "axios";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 import TaskModificationForm from "./TaskModificationForm";
 import { useToast } from "./ui/use-toast";
-import { Todo } from "@prisma/client";
-import { useTypedDispatch } from "@/redux/store";
-import { initiateTodos } from "@/redux/actions/todoAction";
+import todoDeleteRequest from "@/requests/todoDeleteRequest";
 
 type TaskEditFormProps = {
   handleOnSuccess: () => void;
@@ -29,7 +29,8 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
   handleOnClose,
   task,
 }) => {
-  const dispatch = useTypedDispatch();
+  const queryClient = useQueryClient();
+
   const { axiosToast } = useToast();
   const form = useForm<TodoEditRequest>({
     resolver: zodResolver(TodoEditValidator),
@@ -39,52 +40,73 @@ const TaskEditFormController: FC<TaskEditFormProps> = ({
   });
 
   const editMutation = useMutation({
-    mutationFn: async ({
+    mutationFn: todoEditRequest,
+    onMutate: async ({
+      id,
       title,
       description,
       state,
       deadline,
       label,
+      order,
     }: TodoEditRequest) => {
-      const data = await todoEditRequest({
-        id: task.id,
-        title,
-        description,
-        state,
-        deadline,
-        label,
-      });
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
 
-      dispatch(initiateTodos(data));
-      return data;
+      const prevTodos = queryClient.getQueryData<Todo[]>(["todos"]);
+
+      queryClient.setQueryData(
+        ["todos"],
+        prevTodos?.map((todo) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              title,
+              description,
+              state,
+              deadline,
+              label,
+              order,
+            };
+          }
+          return todo;
+        }) ?? [],
+      );
+
+      handleOnSuccess();
+
+      return { prevTodos };
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosError, payload, context) => {
+      queryClient.setQueryData(["todos"], context?.prevTodos);
       axiosToast(error);
     },
-    onSuccess: () => {
-      handleOnSuccess();
+    onSuccess: (newTodos) => {
+      queryClient.setQueryData(["todos"], newTodos);
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async ({ id }: TodoDeleteRequest) => {
-      const { data }: { data: Todo[] } = await axios.delete(
-        "/api/todo/delete",
-        {
-          data: {
-            id,
-          },
-        },
+    mutationFn: todoDeleteRequest,
+    onMutate: async ({ id }: TodoDeleteRequest) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+
+      const prevTodos = queryClient.getQueryData<Todo[]>(["todos"]);
+
+      queryClient.setQueryData(
+        ["todos"],
+        prevTodos?.filter((todo) => todo.id !== id) ?? [],
       );
 
-      dispatch(initiateTodos(data));
-      return data;
+      handleOnSuccess();
+
+      return { prevTodos };
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosError, payload, context) => {
+      queryClient.setQueryData(["todos"], context?.prevTodos);
       axiosToast(error);
     },
-    onSuccess: () => {
-      handleOnSuccess();
+    onSuccess: (newTodos) => {
+      queryClient.setQueryData(["todos"], newTodos);
     },
   });
 

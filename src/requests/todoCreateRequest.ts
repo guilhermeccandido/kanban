@@ -1,10 +1,10 @@
+import { axiosInstance } from "@/lib/axios";
 import { TodoCreateRequest } from "@/lib/validators/todo";
 import { Todo } from "@prisma/client";
-import axios from "axios";
 
 const todoCreateRequest = async (payload: TodoCreateRequest) => {
   try {
-    const result = await axios.post("/api/todo/create", payload);
+    const result = await axiosInstance.post("/todo/create", payload);
     return result.data as Promise<Todo>;
   } catch (error) {
     throw error;

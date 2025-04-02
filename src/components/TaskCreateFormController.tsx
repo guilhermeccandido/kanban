@@ -8,12 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import "react-quill/dist/quill.snow.css";
 import TaskModificationForm from "./TaskModificationForm";
 import { useToast } from "./ui/use-toast";
-import { useTypedDispatch } from "@/redux/store";
-import { addTodo } from "@/redux/actions/todoAction";
+import { Todo } from "@prisma/client";
 
 type TaskCreateFormProps = {
   handleOnSuccess: () => void;
@@ -26,8 +25,9 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
   handleOnClose,
   task,
 }) => {
-  const dispatch = useTypedDispatch();
+  const queryClient = useQueryClient();
   const { axiosToast } = useToast();
+
   const form = useForm<TodoCreateRequest>({
     resolver: zodResolver(TodoCreateValidator),
     defaultValues: {
@@ -51,13 +51,14 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
         deadline,
         label,
       });
-      dispatch(addTodo(data));
+
       return data;
     },
     onError: (error: AxiosError) => {
       axiosToast(error);
     },
-    onSuccess: () => {
+    onSuccess: (newTodo) => {
+      queryClient.setQueryData(["todos"], (old: Todo[]) => [...old, newTodo]);
       handleOnSuccess();
     },
   });

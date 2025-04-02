@@ -2,20 +2,20 @@
 
 import useBreakpoint from "@/hooks/useBreakpoint";
 import { TASK_STATE_OPTIONS } from "@/lib/const";
-import { throttle } from "@/lib/helper";
 import { cn } from "@/lib/utils";
+import todoLabelFetchRequest from "@/requests/todoLabelFetchRequest";
 import { Todo } from "@prisma/client";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { CalendarIcon, X } from "lucide-react";
-import { FC, lazy, useCallback, useMemo } from "react";
+import { FC, lazy } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { UseMutationResult } from "react-query";
+import { UseMutationResult, useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 import CustomizedMultSelect from "./CustomizedMultSelect";
 import CustomizedSelect from "./CustomizedSelect";
@@ -60,18 +60,13 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
     control,
   } = formFunctionReturn;
   const { mutate: submitEditTodoTask, isLoading } = editMutationFunctionReturn;
-  const { mutate: deleteFunc, isLoading: deleteTaskIsLoading } =
+  const { mutate: deleteFunc } =
     deleteMutationFunctionReturn ?? { mutate: () => {}, isLoading: false };
 
-  const fetchLabels = useCallback(async () => {
-    try {
-      const result = await axios.get("/api/todo/label");
-      return result.data;
-    } catch (error: any) {
-      axiosToast(error);
-      return [];
-    }
-  }, [axiosToast]);
+  const { data: labels } = useQuery({
+    queryKey: ["labels"],
+    queryFn: todoLabelFetchRequest,
+  });
 
   const ErrorMessage = ({ msg }: ErrorMessageProps) => {
     return <span className="text-red-500 text-xs">{msg}</span>;
@@ -125,7 +120,7 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white z-50">
+                <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-900 z-50">
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
@@ -154,7 +149,7 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="Select the label"
-                lazyFetch={fetchLabels}
+                options={labels}
               />
             )}
           />
@@ -218,7 +213,6 @@ const TaskModificationForm: FC<TaskEditFormProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => deleteFunc({ id: task.id })}
-                    isLoading={deleteTaskIsLoading}
                   >
                     Delete Task
                   </Button>

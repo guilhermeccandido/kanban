@@ -94,6 +94,8 @@
     }
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    font-weight: 500;
   }
   body {
     @apply bg-background text-foreground;

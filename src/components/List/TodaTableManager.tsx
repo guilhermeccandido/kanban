@@ -4,11 +4,11 @@ import { State, Todo } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import { Button } from "../ui/button";
 import TableSortedIcon from "./TableSortedIcon";
 import TodoTable from "./TodoTable";
-import { selectTodos } from "@/redux/selector/todoSelector";
+import { useQuery } from "react-query";
+import todoFetchRequest from "@/requests/todoFetchRequest";
 
 const TodoTableManager = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -17,7 +17,10 @@ const TodoTableManager = () => {
     setIsMounted(true);
   }, []);
 
-  const todos = useSelector(selectTodos);
+  const { data: todos } = useQuery({
+    queryKey: ["todos"],
+    queryFn: todoFetchRequest,
+  });
   const order = useMemo(() => Object.values(State), []);
 
   const todoColumns: ColumnDef<Todo>[] = [
@@ -146,7 +149,7 @@ const TodoTableManager = () => {
 
   return (
     <>
-      <TodoTable columns={todoColumns} data={todos} />
+      <TodoTable columns={todoColumns} data={todos || []} />
     </>
   );
 };
