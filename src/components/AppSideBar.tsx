@@ -5,109 +5,183 @@ import useResize from "@/hooks/useResize";
 import { cn } from "@/lib/utils";
 import { closeSideBar } from "@/redux/actions/appAction";
 import { ReduxState } from "@/redux/store";
-import { Calendar, Columns3, ListIcon, Menu } from "lucide-react";
+import {
+  BarChart2,
+  Calendar,
+  Clock,
+  Columns3,
+  ListIcon,
+  Menu,
+  Tag,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  ForwardRefExoticComponent,
+  ForwardRefRenderFunction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Button } from "./ui/button";
 
 type NavContent = {
   title: string;
-  icon: JSX.Element;
+  icon: ForwardRefExoticComponent<any>;
   link: string;
 };
 
 const NAV_CONTENT: NavContent[] = [
   {
     title: "Board",
-    icon: <Columns3 />,
+    icon: Tag,
     link: "/",
   },
   {
-    title: "Calendar",
-    icon: <Calendar />,
-    link: "/calendar",
+    title: "Dashboard",
+    icon: BarChart2,
+    link: "/dashboard",
   },
   {
     title: "List",
-    icon: <ListIcon />,
+    icon: ListIcon,
     link: "/list",
+  },
+  {
+    title: "Timeline",
+    icon: Clock,
+    link: "/timeline",
   },
 ];
 
+// Project items
+const projectItems = [
+  {
+    path: "/?filter=Self-Project",
+    label: "Self-Project",
+    color: "bg-blue-500",
+  },
+  { path: "/?filter=EasyBoard", label: "EasyBoard", color: "bg-purple-500" },
+  { path: "/?filter=KTodo", label: "KTodo", color: "bg-teal-500" },
+  { path: "/?filter=FYP", label: "FYP", color: "bg-red-500" },
+];
+
 const AppSideBar = () => {
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const isOpen = useSelector<ReduxState, boolean>(
-    (state) => state.app.isSideBarOpen,
-  );
-  const currentPath = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
-  const dispatch = useDispatch();
-  const size = useResize({ el: window });
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // Only handle clicks outside when the sidebar is open on mobile
+      if (
+        window.innerWidth < 768 &&
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
+        setIsSidebarOpen(false);
+      }
+    }
 
-  const usingDrawer = size.width < 768;
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSidebarOpen]);
 
-  const handleCloseDrawer = useCallback(() => {
-    dispatch(closeSideBar());
-  }, [dispatch]);
-  useClickOutSide(drawerRef, handleCloseDrawer);
+  useEffect(() => {
+    function handleResize() {
+      // Auto-expand sidebar on larger screens
+      if (window.innerWidth >= 1024 && !isSidebarOpen) {
+        setIsSidebarOpen(true);
+      }
+    }
 
-  const content = useMemo(() => {
-    return (
-      <div className="flex flex-col gap-1">
-        {NAV_CONTENT.map((content, index) => {
-          return (
-            <div
-              key={index}
-              className={cn(
-                "px-2 pb-1 pt-2 rounded-md hover:bg-secondary",
-                content.link === currentPath
-                  ? "bg-secondary text-white"
-                  : "bg-transparent",
-              )}
-            >
-              <Link href={content.link} passHref legacyBehavior>
-                <a
-                  onClick={handleCloseDrawer}
-                  className="flex gap-5 content-center pb-1"
-                >
-                  <span>{content.icon}</span>
-                  <span>{content.title}</span>
-                </a>
-              </Link>
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isSidebarOpen]);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prevState) => !prevState);
+  };
+
+  return (
+    <div
+      ref={sidebarRef}
+      className={cn(
+        "bg-white dark:bg-gray-900 h-full transition-all duration-300 border-r dark:border-gray-800 z-10",
+        isSidebarOpen ? "w-64" : "w-16",
+      )}
+    >
+      <div className="flex items-center justify-between p-4 border-b dark:border-gray-800">
+        {isSidebarOpen && (
+          <h1
+            className={cn(
+              "font-bold text-xl text-teal-600 dark:text-teal-400 transition-opacity duration-300",
+              isSidebarOpen ? "opacity-100" : "opacity-0 absolute",
+            )}
+          >
+            KTodo
+          </h1>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleSidebar}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 w-8 h-8 flex items-center justify-center"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
+
+      <div className="p-4">
+        <nav className="space-y-2">
+          {NAV_CONTENT.map((item) => (
+            <Link key={item.link} href={item.link} className="block">
+              <Button
+                variant="ghost"
+                className={cn(
+                  "w-full justify-start text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+                  pathname === item.link &&
+                    "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white",
+                  !isSidebarOpen && "justify-center p-0",
+                )}
+              >
+                <item.icon className={cn("h-5 w-5", isSidebarOpen && "mr-2")} />
+                {isSidebarOpen && <span>{item.title}</span>}
+              </Button>
+            </Link>
+          ))}
+        </nav>
+
+        {isSidebarOpen && (
+          <div className="mt-8">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              Projects
+            </h3>
+            <div className="space-y-1">
+              {projectItems.map((project) => (
+                <Link key={project.path} href={project.path} className="block">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${project.color} mr-2`}
+                    ></span>
+                    <span>{project.label}</span>
+                  </Button>
+                </Link>
+              ))}
             </div>
-          );
-        })}
-      </div>
-    );
-  }, [handleCloseDrawer, currentPath]);
-
-  if (!isOpen) return null;
-
-  return usingDrawer ? (
-    <>
-      <div className="absolute top-0 left-0 w-full h-full z-10 bg-zinc-500/30 backdrop-blur-[1px]" />
-      <div
-        className="absolute top-0 left-0 container bg-white w-72 h-full mx-0 opacity-100 z-20"
-        ref={drawerRef}
-      >
-        <div className="pt-[3.25rem] pb-5">
-          <div className="w-6 h-6 cursor-pointer">
-            <Menu onClick={handleCloseDrawer} />
           </div>
-        </div>
-
-        {content}
+        )}
       </div>
-    </>
-  ) : (
-    <div className="container pt-12 bg-white w-72 h-full mx-0 z-20 min-w-[260px] max-w-[260px]">
-      <div className="pb-5 pt-1">
-        <div className="w-6 h-6 cursor-pointer">
-          <Menu onClick={handleCloseDrawer} />
-        </div>
-      </div>
-      {content}
     </div>
   );
 };

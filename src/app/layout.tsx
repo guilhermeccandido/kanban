@@ -1,4 +1,3 @@
-import AppLayout from "@/components/AppLayout";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Providers } from "@/components/Provider";
@@ -19,9 +18,7 @@ export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <Providers>
-          <AppLayout>{children}</AppLayout>
-        </Providers>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>

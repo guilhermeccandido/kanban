@@ -1,22 +1,32 @@
+"use client";
+
+import AppLayout from "@/components/AppLayout";
 import AppSubHeader from "@/components/AppSubHeader";
 import TodoColumnManager from "@/components/Home/TodoColumnManager";
 import TodoWrapper from "@/components/TodoWrapper";
-import { getAuthSession } from "@/lib/nextAuthOptions";
-import { todoFetchRequest } from "@/requests/todoFetchRequest";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
-const Home = async () => {
-  const sesison = await getAuthSession();
-  const todos = await todoFetchRequest(sesison);
-
+const Home = () => {
   return (
-    <div className="h-full flex flex-col">
-      <AppSubHeader title="Board" link="/" />
-      <div className="h-[90%] flex-auto">
-        <TodoWrapper todos={todos}>
-          <TodoColumnManager />
-        </TodoWrapper>
+    <AppLayout
+      title="Board"
+      action={
+        <Button onClick={() => {}}>
+          <PlusCircle className="h-4 w-4 mr-2" />
+          New Task
+        </Button>
+      }
+    >
+      <div className="h-full flex flex-col">
+        <AppSubHeader title="Board" link="/" />
+        <div className="h-[90%] flex-auto">
+          <TodoWrapper todos={[]}>
+            <TodoColumnManager />
+          </TodoWrapper>
+        </div>
       </div>
-    </div>
+    </AppLayout>
   );
 };
 
