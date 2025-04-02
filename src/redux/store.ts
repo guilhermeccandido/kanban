@@ -8,13 +8,11 @@ import {
 } from "redux";
 import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import app from "@/redux/reducers/appReducer";
 import editTodo from "@/redux/reducers/todoEditorReducer";
 import todo from "@/redux/reducers/todoReducer";
 import { createWrapper } from "next-redux-wrapper";
 
 const rootReducer = combineReducers({
-  app,
   editTodo,
   todo,
 });
