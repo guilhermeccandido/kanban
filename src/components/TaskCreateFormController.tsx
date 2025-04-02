@@ -37,28 +37,13 @@ const TaskCreateFormController: FC<TaskCreateFormProps> = ({
   });
 
   const editMutation = useMutation({
-    mutationFn: async ({
-      title,
-      description,
-      state,
-      deadline,
-      label,
-    }: TodoCreateRequest) => {
-      const data = await todoCreateRequest({
-        title,
-        description,
-        state,
-        deadline,
-        label,
-      });
-
-      return data;
-    },
+    mutationFn: todoCreateRequest,
     onError: (error: AxiosError) => {
       axiosToast(error);
     },
     onSuccess: (newTodo) => {
-      queryClient.setQueryData(["todos"], (old: Todo[]) => [...old, newTodo]);
+      const prevTodos = queryClient.getQueryData<Todo[]>(["todos"]) ?? [];
+      queryClient.setQueryData(["todos"], [...prevTodos, newTodo]);
       handleOnSuccess();
     },
   });
