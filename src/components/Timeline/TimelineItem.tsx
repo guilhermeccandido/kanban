@@ -29,6 +29,7 @@ const TimelineItem: FC<TimelineItemProps> = ({ todo, isLast = false }) => {
 
   // Determine if task is overdue
   const isOverdue = !!dueDate && createdDate.isAfter(dueDate);
+  const isFinished = todo.state === "DONE" || todo.state === "REVIEW";
 
   // Get the appropriate icon based on task status
   const getStatusIcon = (state: Todo["state"]) => {
@@ -141,18 +142,33 @@ const TimelineItem: FC<TimelineItemProps> = ({ todo, isLast = false }) => {
               {dueDate && (
                 <div className="flex items-center">
                   <Calendar className="h-3.5 w-3.5 mr-1" />
-                  <span className={isOverdue ? "text-red-500 font-medium" : ""}>
+                  <span
+                    className={cn(
+                      isOverdue && !isFinished
+                        ? "text-red-500 font-medium"
+                        : "",
+                      isFinished && "text-green-500 font-medium",
+                    )}
+                  >
                     Due {dayjs(dueDate).format("MMM D")}
                   </span>
                 </div>
               )}
 
-              {isOverdue && (
+              {isOverdue && !isFinished && (
                 <Badge
                   variant="outline"
                   className="bg-red-500/10 text-red-500 border-red-500/20"
                 >
                   Overdue
+                </Badge>
+              )}
+              {!!dueDate && isFinished && (
+                <Badge
+                  variant="outline"
+                  className="bg-green-500/10 text-green-500 border-green-500/20"
+                >
+                  Finished
                 </Badge>
               )}
             </div>
