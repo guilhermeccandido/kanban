@@ -36,10 +36,10 @@ const UserAccountNav: FC<UserAccountNavProp> = ({ user }) => {
 				</div>
 				<DropdownMenuSeparator />
 
-				<DropdownMenuItem asChild>
-					<Link href='/settings'>Settings</Link>
-				</DropdownMenuItem>
-				<DropdownMenuSeparator />
+				{/* <DropdownMenuItem asChild> */}
+				{/* 	<Link href='/settings'>Settings</Link> */}
+				{/* </DropdownMenuItem> */}
+				{/* <DropdownMenuSeparator /> */}
 				<DropdownMenuItem
 					className='cursor-pointer'
 					onClick={(event) => {
