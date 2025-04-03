@@ -47,7 +47,7 @@ const TodoColumn: FC<TodoColumnProp> = ({ title, todos, state }) => {
     >
       <div
         className={cn(
-          "p-3 font-medium rounded-t-lg flex items-center justify-between sticky top-0 z-10 text-card-foreground",
+          "p-3 font-medium rounded-t-lg flex items-center justify-between sticky top-0 text-card-foreground",
           getColumnHeaderColor(state),
         )}
       >
