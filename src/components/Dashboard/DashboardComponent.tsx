@@ -10,11 +10,12 @@ import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
 import { BarChart, CheckCircle, Circle, Clock } from "lucide-react";
 import { useQuery } from "react-query";
+import { Skeleton } from "../ui/skeleton";
 
 //TODO: clock color
 
 const DashboardComponent = () => {
-  const { data: todos } = useQuery<Todo[]>({
+  const { data: todos, isLoading } = useQuery<Todo[]>({
     queryKey: ["todos"],
     queryFn: todoFetchRequest,
   });
@@ -65,6 +66,27 @@ const DashboardComponent = () => {
       },
       {} as Record<string, { total: number; completed: number }>,
     ) || {};
+
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-sm text-muted-foreground mb-8">
+          <Skeleton className="h-4 w-64" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-32" />
+          ))}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Skeleton className="h-96 lg:col-span-4" />
+          <Skeleton className="h-96 lg:col-span-3" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -226,7 +248,7 @@ const DashboardComponent = () => {
                       className={cn("h-5 w-5", getClockColor(task.title).badge)}
                     />
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 overflow-hidden text-ellipsis whitespace-nowrap">
                     <p className="text-sm font-medium leading-none">
                       {task.title}
                     </p>
@@ -234,7 +256,7 @@ const DashboardComponent = () => {
                       {dayjs(task.deadline).format("MMM D, h:mm A")}
                     </p>
                   </div>
-                  <div className="ml-auto flex gap-1">
+                  <div className="ml-auto xl:flex md:hidden gap-1">
                     {task.label.map((label) => (
                       <Badge variant="outline" key={label}>
                         {label}

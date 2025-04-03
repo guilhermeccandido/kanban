@@ -11,13 +11,16 @@ import DndContextProvider, { OnDragEndEvent } from "../DnDContextProvider";
 import { useToast } from "../ui/use-toast";
 import TodoColumn from "./TodoColumn";
 import todoFetchRequest from "@/requests/todoFetchRequest";
+import { Skeleton } from "../ui/skeleton";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import SkeletonColumn from "./SkeletonColumn";
 
 const TodoColumnManager = () => {
   const router = useRouter();
   const { axiosToast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: todos } = useQuery<Todo[]>({
+  const { data: todos, isLoading } = useQuery<Todo[]>({
     queryKey: ["todos"],
     queryFn: todoFetchRequest,
   });
@@ -110,6 +113,17 @@ const TodoColumnManager = () => {
 
     handleUpdateState(payload);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex gap-2 overflow-x-scroll p-6">
+        <SkeletonColumn state="TODO" />
+        <SkeletonColumn state="IN_PROGRESS" />
+        <SkeletonColumn state="REVIEW" />
+        <SkeletonColumn state="DONE" />
+      </div>
+    );
+  }
 
   return (
     <DndContextProvider onDragEnd={handleDragEnd}>
