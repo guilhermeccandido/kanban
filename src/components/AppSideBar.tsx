@@ -97,14 +97,16 @@ const AppSideBar = () => {
     >
       <div className="flex items-center justify-between p-4 border-b dark:border-gray-800">
         {isSidebarOpen && (
-          <h1
-            className={cn(
-              "font-bold text-xl text-teal-600 dark:text-teal-400 transition-opacity duration-300",
-              isSidebarOpen ? "opacity-100" : "opacity-0 absolute",
-            )}
-          >
-            KTodo
-          </h1>
+          <Link href="/">
+            <h1
+              className={cn(
+                "font-bold text-xl text-teal-600 dark:text-teal-400 transition-opacity duration-300",
+                isSidebarOpen ? "opacity-100" : "opacity-0 absolute",
+              )}
+            >
+              KTodo
+            </h1>
+          </Link>
         )}
         <Button
           variant="ghost"
