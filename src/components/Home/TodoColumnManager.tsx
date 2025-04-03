@@ -29,19 +29,63 @@ const TodoColumnManager = () => {
 
       const previousTodos = queryClient.getQueryData<Todo[]>(["todos"]);
 
-      queryClient.setQueryData<Todo[]>(
-        ["todos"],
+      const originalTodo = previousTodos?.find(
+        (todo) => todo.id === payload.id,
+      );
+      const originalState = originalTodo?.state!;
+      const originalOrder = originalTodo?.order!;
+
+      const newState = payload.state!;
+      const updateTodoOrder = payload.order!;
+
+      const newTodos =
         previousTodos?.map((todo) => {
           if (todo.id === payload.id) {
             return {
               ...todo,
-              state: payload.state!,
-              order: payload.order!,
+              state: newState,
+              order: updateTodoOrder,
             };
           }
+
+          if (todo.state === originalState) {
+            if (originalState === newState) {
+              if (originalOrder < updateTodoOrder) {
+                if (
+                  todo.order > originalOrder &&
+                  todo.order <= updateTodoOrder
+                ) {
+                  return { ...todo, order: todo.order - 1 };
+                }
+              } else if (originalOrder > updateTodoOrder) {
+                if (
+                  todo.order >= updateTodoOrder &&
+                  todo.order < originalOrder
+                ) {
+                  return { ...todo, order: todo.order + 1 };
+                }
+              }
+            } else {
+              if (todo.order > originalOrder) {
+                return { ...todo, order: todo.order - 1 };
+              }
+            }
+          }
+
+          if (todo.state === newState) {
+            if (originalState !== newState) {
+              if (todo.order >= updateTodoOrder) {
+                return { ...todo, order: todo.order + 1 };
+              }
+            } else {
+              return todo;
+            }
+          }
+
           return todo;
-        }) ?? [],
-      );
+        }) ?? [];
+
+      queryClient.setQueryData<Todo[]>(["todos"], newTodos);
 
       return { previousTodos };
     },
