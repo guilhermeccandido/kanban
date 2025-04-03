@@ -77,3 +77,30 @@ export const PROJECT_COLORS = [
     badge: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
   },
 ];
+
+export const CLOCK_COLOR = [
+  {
+    bg: "bg-amber-100 dark:bg-amber-900",
+    badge: "text-amber-600 dark:text-amber-400",
+  },
+  {
+    bg: "bg-rose-100 dark:bg-rose-900",
+    badge: "text-rose-600 dark:text-rose-400",
+  },
+  {
+    bg: "bg-fuchsia-100 dark:bg-fuchsia-900",
+    badge: "text-fuchsia-600 dark:text-fuchsia-400",
+  },
+  {
+    bg: "bg-indigo-100 dark:bg-indigo-900",
+    badge: "text-indigo-600 dark:text-indigo-400",
+  },
+  {
+    bg: "bg-cyan-100 dark:bg-cyan-900",
+    badge: "text-cyan-600 dark:text-cyan-400",
+  },
+  {
+    bg: "bg-sky-100 dark:bg-sky-900",
+    badge: "text-sky-600 dark:text-sky-400",
+  },
+];

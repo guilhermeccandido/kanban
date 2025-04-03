@@ -3,17 +3,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getLabelColor } from "@/lib/color";
+import { getClockColor, getLabelColor } from "@/lib/color";
 import { cn } from "@/lib/utils";
 import todoFetchRequest from "@/requests/todoFetchRequest";
 import { Todo } from "@prisma/client";
 import dayjs from "dayjs";
-import {
-  BarChart,
-  CheckCircle,
-  Circle,
-  Clock
-} from "lucide-react";
+import { BarChart, CheckCircle, Circle, Clock } from "lucide-react";
 import { useQuery } from "react-query";
 
 //TODO: clock color
@@ -221,8 +216,15 @@ const DashboardComponent = () => {
             <div className="space-y-4">
               {upcomingTasks?.map((task) => (
                 <div key={task.id} className="flex items-center mb-4">
-                  <div className="mr-4 flex h-9 w-9 items-center justify-center rounded-full bg-amber-100">
-                    <Clock className="h-5 w-5 text-amber-600" />
+                  <div
+                    className={cn(
+                      "mr-4 flex h-9 w-9 items-center justify-center rounded-full",
+                      getClockColor(task.title).bg,
+                    )}
+                  >
+                    <Clock
+                      className={cn("h-5 w-5", getClockColor(task.title).badge)}
+                    />
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">
