@@ -39,26 +39,16 @@ const NAV_CONTENT: NavContent[] = [
   },
 ];
 
-// const projectItems = [
-//   {
-//     path: "/?filter=Self-Project",
-//     label: "Self-Project",
-//     color: "bg-blue-500",
-//   },
-//   { path: "/?filter=EasyBoard", label: "EasyBoard", color: "bg-purple-500" },
-//   { path: "/?filter=KTodo", label: "KTodo", color: "bg-teal-500" },
-//   { path: "/?filter=FYP", label: "FYP", color: "bg-red-500" },
-// ];
-
 const AppSideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  const { data: labels } = useQuery({
-    queryKey: ["labels"],
-    queryFn: todoLabelFetchRequest,
-  });
+  // const { data: labels } = useQuery({
+  //   queryKey: ["labels"],
+  //   queryFn: todoLabelFetchRequest,
+  // });
+  const labels = [];
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
