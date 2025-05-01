@@ -27,11 +27,11 @@ const NAV_CONTENT: NavContent[] = [
     icon: BarChart2,
     link: "/dashboard",
   },
-  {
-    title: "List",
-    icon: ListIcon,
-    link: "/list",
-  },
+  // {
+  //   title: "List",
+  //   icon: ListIcon,
+  //   link: "/list",
+  // },
   {
     title: "Timeline",
     icon: Clock,
