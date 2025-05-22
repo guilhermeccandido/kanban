@@ -1,5 +1,5 @@
 import { getAuthSession } from "@/lib/nextAuthOptions";
-import { Bell, Search, Settings } from "lucide-react";
+import { Bell, Menu, Search, Settings } from "lucide-react";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import UserAccountNav from "./UserAccountNav";
 import { Button, buttonVariants } from "./ui/button";
@@ -17,6 +17,14 @@ const AppHeader = async () => {
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 py-3 px-4 flex items-center justify-between">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 w-10 h-10 flex items-center justify-center px-2 mr-2 md:hidden invisible z-0"
+        disabled={true}
+      >
+        <Menu className="h-5 w-5" />
+      </Button>
       <div className="flex items-center w-full max-w-md">
         <div className="relative w-full">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />

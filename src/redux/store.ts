@@ -9,10 +9,12 @@ import {
 import thunk, { ThunkAction, ThunkDispatch } from "redux-thunk";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import editTodo from "@/redux/reducers/todoEditorReducer";
+import sidebar from "@/redux/reducers/sidebarReducer";
 import { createWrapper } from "next-redux-wrapper";
 
 const rootReducer = combineReducers({
   editTodo,
+  sidebar,
 });
 
 export const store = createStore(

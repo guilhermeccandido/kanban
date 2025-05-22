@@ -78,7 +78,7 @@ const TimelineItem: FC<TimelineItemProps> = ({ todo, isLast = false }) => {
       <div className="relative flex flex-col items-center mr-4">
         <div
           className={cn(
-            "flex items-center justify-center w-10 h-10 rounded-full z-10",
+            "flex items-center justify-center w-10 h-10 rounded-full z-0",
             getStatusColor(todo.state),
           )}
         >
