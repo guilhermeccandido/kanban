@@ -1,4 +1,3 @@
-import useBreakpoint from "@/hooks/useBreakpoint";
 import useClickOutSide from "@/hooks/useClickOutSide";
 import useEsc from "@/hooks/useEsc";
 import clsx from "clsx";
@@ -16,7 +15,6 @@ const CustomizedDialog: FC<CustomizedDialogProps> = ({
   onClose = () => {},
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const { md } = useBreakpoint();
 
   useClickOutSide(dialogRef, onClose);
   useEsc(onClose);
@@ -28,8 +26,7 @@ const CustomizedDialog: FC<CustomizedDialogProps> = ({
       <div className="absolute w-screen h-screen z-10 bg-zinc-500/30 backdrop-blur-[1px] inset-0" />
       <div
         className={clsx(
-          "absolute inset-1/2 -translate-x-1/2 -translate-y-[50%] rounded-xl shadow-lg z-20 bg-white h-fit",
-          typeof md === "undefined" || md ? "w-[768px]" : "w-[90%]",
+          "absolute sm:inset-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 rounded-xl shadow-lg z-20 sm:h-fit md:w-[768px] sm:w-[90%] w-screen h-screen inset-0",
         )}
         ref={dialogRef}
       >
