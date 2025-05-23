@@ -72,6 +72,7 @@ const CustomizedMultSelect: FC<CustomizedMultSelectProps> = ({
       : [...privateValue, option];
     setPrivateValue(newValue);
     resetOptions();
+    setIsNewLabel(false);
     if (onChange) onChange(newValue);
   };
 
